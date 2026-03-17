@@ -1,5 +1,17 @@
 # Journal de développement
 
+## 2026-03-17 15:49:38
+
+### Modifications
+- Ajout du sous-package `core` avec les objets centraux `HttpMethod`, `BaobabRequest`, `BaobabResponse`.
+- Ajout des tests unitaires en miroir couvrant validations, immutabilité et comportements utiles.
+
+### Buts
+- Modéliser les échanges HTTP de manière typée et indépendante du transport.
+
+### Impact
+- Les couches futures (transport, service) pourront construire/consommer des requêtes/réponses de façon standardisée.
+
 ## 2026-03-17 15:33:18
 
 ### Modifications
