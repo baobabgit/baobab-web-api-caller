@@ -101,6 +101,8 @@ class TestHttpTransportCaller:
         resp = caller.call(req)
 
         session.request.assert_called_once()
+        session.close.assert_called_once()
+        response.close.assert_called_once()
         kwargs = session.request.call_args.kwargs
         assert kwargs["method"] == "GET"
         assert kwargs["url"].startswith("https://example.com/v1/items?")
@@ -138,6 +140,8 @@ class TestHttpTransportCaller:
             timeout_seconds=0.5,
         )
         _ = caller.call(req)
+        session.close.assert_called_once()
+        response.close.assert_called_once()
         assert session.request.call_args.kwargs["timeout"] == 0.5
 
     def test_timeout_exception_is_wrapped(self) -> None:
@@ -154,6 +158,7 @@ class TestHttpTransportCaller:
 
         with pytest.raises(TimeoutException):
             caller.call(req)
+        session.close.assert_called_once()
 
     def test_request_exception_is_wrapped(self) -> None:
         """Wrappe requests.RequestException en TransportException."""
@@ -169,6 +174,7 @@ class TestHttpTransportCaller:
 
         with pytest.raises(TransportException):
             caller.call(req)
+        session.close.assert_called_once()
 
     def test_http_404_is_mapped(self) -> None:
         """404 -> ResourceNotFoundException."""
@@ -190,6 +196,8 @@ class TestHttpTransportCaller:
 
         with pytest.raises(ResourceNotFoundException):
             caller.call(req)
+        session.close.assert_called_once()
+        response.close.assert_called_once()
 
     def test_invalid_json_is_mapped_to_decoding_exception(self) -> None:
         """JSON invalide -> ResponseDecodingException."""
@@ -211,6 +219,8 @@ class TestHttpTransportCaller:
 
         with pytest.raises(ResponseDecodingException):
             caller.call(req)
+        session.close.assert_called_once()
+        response.close.assert_called_once()
 
     def test_retry_succeeds_after_timeout(self) -> None:
         """Succès après retry sur timeout."""
@@ -261,6 +271,8 @@ class TestHttpTransportCaller:
         assert resp.status_code == 200
         assert session.request.call_count == 2
         assert sleeps == [0.2]
+        session.close.assert_called_once()
+        response.close.assert_called_once()
 
     def test_retry_succeeds_after_5xx(self) -> None:
         """Succès après retry sur 5xx."""
@@ -315,18 +327,27 @@ class TestHttpTransportCaller:
         _ = caller.call(req)
         assert session.request.call_count == 2
         assert sleeps == [0.1]
+        session.close.assert_called_once()
+        response_500.close.assert_called_once()
+        response_200.close.assert_called_once()
 
     def test_retry_fails_after_max_attempts_on_5xx(self) -> None:
         """Échec final après retries sur 5xx."""
 
-        response_500 = Mock(spec=requests.Response)
-        response_500.status_code = 503
-        response_500.headers = {}
-        response_500.content = b""
-        response_500.text = ""
+        response_503_a = Mock(spec=requests.Response)
+        response_503_a.status_code = 503
+        response_503_a.headers = {}
+        response_503_a.content = b""
+        response_503_a.text = ""
+
+        response_503_b = Mock(spec=requests.Response)
+        response_503_b.status_code = 503
+        response_503_b.headers = {}
+        response_503_b.content = b""
+        response_503_b.text = ""
 
         session = Mock(spec=requests.Session)
-        session.request.return_value = response_500
+        session.request.side_effect = [response_503_a, response_503_b]
 
         time_provider = FakeTimeProvider(now=0.0)
         sleeps: list[float] = []
@@ -364,18 +385,27 @@ class TestHttpTransportCaller:
             caller.call(req)
         assert session.request.call_count == 2
         assert sleeps == [0.1]
+        session.close.assert_called_once()
+        response_503_a.close.assert_called_once()
+        response_503_b.close.assert_called_once()
 
     def test_429_is_retried_and_then_raises(self) -> None:
         """Retry sur 429 puis exception projet RateLimitException."""
 
-        response_429 = Mock(spec=requests.Response)
-        response_429.status_code = 429
-        response_429.headers = {}
-        response_429.content = b""
-        response_429.text = ""
+        response_429_a = Mock(spec=requests.Response)
+        response_429_a.status_code = 429
+        response_429_a.headers = {}
+        response_429_a.content = b""
+        response_429_a.text = ""
+
+        response_429_b = Mock(spec=requests.Response)
+        response_429_b.status_code = 429
+        response_429_b.headers = {}
+        response_429_b.content = b""
+        response_429_b.text = ""
 
         session = Mock(spec=requests.Session)
-        session.request.return_value = response_429
+        session.request.side_effect = [response_429_a, response_429_b]
 
         time_provider = FakeTimeProvider(now=0.0)
         sleeps: list[float] = []
@@ -413,6 +443,9 @@ class TestHttpTransportCaller:
             caller.call(req)
         assert session.request.call_count == 2
         assert sleeps == [0.1]
+        session.close.assert_called_once()
+        response_429_a.close.assert_called_once()
+        response_429_b.close.assert_called_once()
 
     def test_throttling_respects_min_interval_without_real_sleep(self) -> None:
         """Respect de l'intervalle minimal entre deux appels."""
@@ -462,3 +495,5 @@ class TestHttpTransportCaller:
 
         assert session.request.call_count == 2
         assert sleeps == [1.0]
+        assert session.close.call_count == 2
+        assert response.close.call_count == 2

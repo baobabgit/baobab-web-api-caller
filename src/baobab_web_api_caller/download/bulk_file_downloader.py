@@ -89,6 +89,7 @@ class BulkFileDownloader:
         if output_path.exists() and not overwrite:
             raise TransportException("output_path already exists")
 
+        ctx = None
         try:
             ctx = build_call_context(
                 request=request,
@@ -97,46 +98,62 @@ class BulkFileDownloader:
                 url_builder=self.url_builder,
                 session_factory=self.session_factory,
             )
-            response = ctx.session.request(
-                method=ctx.prepared_request.method.value,
-                url=ctx.url,
-                params=None,
-                headers=dict(ctx.prepared_request.headers),
-                json=None,
-                data=None,
-                timeout=ctx.timeout,
-                stream=True,
-            )
         except requests.Timeout as exc:  # pragma: no cover
             raise TimeoutException(str(exc)) from exc
         except requests.RequestException as exc:  # pragma: no cover
             raise TransportException(str(exc)) from exc
 
-        headers: dict[str, str] = {str(k): str(v) for k, v in response.headers.items()}
-        status = int(response.status_code)
+        if ctx is None:
+            raise TransportException("call context was not built")
 
-        if status >= 400:
-            raw = BaobabResponse(
-                status_code=status, headers=headers, text=response.text, content=None
-            )
-            self.error_response_mapper.raise_for_error(raw)
-
-        tmp_path = output_path.with_suffix(output_path.suffix + ".part")
+        response: requests.Response | None = None
         try:
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            with tmp_path.open("wb") as f:
-                for chunk in response.iter_content(chunk_size=chunk_size):
-                    if not chunk:
-                        continue
-                    f.write(chunk)
-            if overwrite and output_path.exists():
-                output_path.unlink()
-            tmp_path.replace(output_path)
-            return output_path
-        except OSError as exc:
             try:
-                if tmp_path.exists():
-                    tmp_path.unlink()
-            except OSError:
-                pass
-            raise TransportException(str(exc)) from exc
+                response = ctx.session.request(
+                    method=ctx.prepared_request.method.value,
+                    url=ctx.url,
+                    params=None,
+                    headers=dict(ctx.prepared_request.headers),
+                    json=None,
+                    data=None,
+                    timeout=ctx.timeout,
+                    stream=True,
+                )
+            except requests.Timeout as exc:  # pragma: no cover
+                raise TimeoutException(str(exc)) from exc
+            except requests.RequestException as exc:  # pragma: no cover
+                raise TransportException(str(exc)) from exc
+
+            try:
+                headers: dict[str, str] = {str(k): str(v) for k, v in response.headers.items()}
+                status = int(response.status_code)
+
+                if status >= 400:
+                    raw = BaobabResponse(
+                        status_code=status, headers=headers, text=response.text, content=None
+                    )
+                    self.error_response_mapper.raise_for_error(raw)
+
+                tmp_path = output_path.with_suffix(output_path.suffix + ".part")
+                try:
+                    output_path.parent.mkdir(parents=True, exist_ok=True)
+                    with tmp_path.open("wb") as f:
+                        for chunk in response.iter_content(chunk_size=chunk_size):
+                            if not chunk:
+                                continue
+                            f.write(chunk)
+                    if overwrite and output_path.exists():
+                        output_path.unlink()
+                    tmp_path.replace(output_path)
+                    return output_path
+                except OSError as exc:
+                    try:
+                        if tmp_path.exists():
+                            tmp_path.unlink()
+                    except OSError:
+                        pass
+                    raise TransportException(str(exc)) from exc
+            finally:
+                response.close()
+        finally:
+            ctx.session.close()
