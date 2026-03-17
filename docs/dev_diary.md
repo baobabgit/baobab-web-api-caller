@@ -1,5 +1,17 @@
 # Journal de développement
 
+## 2026-03-17 15:33:18
+
+### Modifications
+- Ajout du sous-package `exceptions` et de la hiérarchie d’exceptions du projet.
+- Ajout des tests unitaires en miroir validant héritage et instanciation.
+
+### Buts
+- Disposer d’une hiérarchie d’erreurs claire et homogène, capturable via une exception racine unique.
+
+### Impact
+- Les couches `transport`, `core`, `service` pourront mapper les erreurs techniques/HTTP vers des exceptions projet.
+
 ## 2026-03-17 15:07:07
 
 ### Modifications
