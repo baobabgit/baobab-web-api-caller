@@ -14,6 +14,19 @@
 ### Impact
 - Les couches supérieures peuvent s'appuyer sur un transport qui renvoie des réponses décodées et des erreurs normalisées.
 
+## 2026-03-17 17:04:47
+
+### Modifications
+- Ajout du sous-package `service` et de la façade `BaobabServiceCaller`.
+- Ajout des helpers `get`, `post`, `put`, `patch`, `delete`, `head`, `options`.
+- Ajout des tests unitaires d’assemblage (fusion headers par défaut/spécifiques, délégation au transport).
+
+### Buts
+- Proposer une API de confort pour construire/exécuter des requêtes HTTP à partir d’une configuration centralisée.
+
+### Impact
+- Les couches applicatives peuvent appeler un service REST via une façade stable, sans couplage au transport concret.
+
 ## 2026-03-17 16:45:32
 
 ### Modifications
