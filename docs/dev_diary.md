@@ -1,5 +1,20 @@
 # Journal de développement
 
+## 2026-03-17 19:02:00
+
+### Modifications
+- Enrichissement de `HttpException` et des exceptions HTTP dérivées (client/serveur/auth) avec des attributs `status_code`, `body_excerpt` et un sous-ensemble d'en-têtes utiles.
+- Mise à jour de `ErrorResponseMapper` pour construire ces exceptions enrichies à partir de `BaobabResponse` (401, 404, 429, autres 4xx, 5xx).
+- Ajustement du transport (`HttpTransportCaller`) pour utiliser les nouvelles signatures d'exceptions de retry (429, 5xx).
+- Ajustement/extension des tests unitaires (`ErrorResponseMapper`, exceptions HTTP, transport) pour couvrir les cas 401/404/429/autres 4xx/5xx, body vide/long, headers filtrés.
+- Mise à jour de `README.md` et du `CHANGELOG.md` pour documenter le mapping d'erreurs enrichi.
+
+### Buts
+- Rendre les exceptions HTTP projet plus parlantes pour le diagnostic (logs, observabilité) sans alourdir l'API publique ni exposer l'intégralité des payloads.
+
+### Impact
+- Les consommateurs continuent de capturer les mêmes types d'exceptions, mais disposent désormais d'un message structuré et d'attributs supplémentaires pour inspecter le contexte HTTP en erreur.
+
 ## 2026-03-17 18:50:44
 
 ### Modifications

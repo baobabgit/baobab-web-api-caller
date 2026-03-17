@@ -19,5 +19,6 @@ class TestAuthenticationException:
     def test_instantiation(self) -> None:
         """Vérifie l'instanciation."""
 
-        exc = AuthenticationException("unauthorized")
+        exc = AuthenticationException(status_code=401, message="unauthorized")
         assert str(exc) == "unauthorized"
+        assert exc.status_code == 401
