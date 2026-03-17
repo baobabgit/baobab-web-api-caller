@@ -1,5 +1,19 @@
 # Journal de développement
 
+## 2026-03-17 16:53:52
+
+### Modifications
+- Suppression du dossier `scripts/`.
+- Ajout des composants `ResponseDecoder`, `JsonResponseDecoder` et `ErrorResponseMapper`.
+- Intégration du décodage et du mapping d'erreurs dans le transport HTTP synchrone.
+- Ajout/ajustement des tests unitaires (JSON nominal/invalide, 401/404/429/4xx/5xx).
+
+### Buts
+- Standardiser le décodage JSON et transformer les erreurs HTTP/décodage en exceptions du projet.
+
+### Impact
+- Les couches supérieures peuvent s'appuyer sur un transport qui renvoie des réponses décodées et des erreurs normalisées.
+
 ## 2026-03-17 16:45:32
 
 ### Modifications

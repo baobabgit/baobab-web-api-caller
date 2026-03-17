@@ -11,7 +11,10 @@ from baobab_web_api_caller.config.service_config import ServiceConfig
 from baobab_web_api_caller.core.baobab_request import BaobabRequest
 from baobab_web_api_caller.core.baobab_response import BaobabResponse
 from baobab_web_api_caller.core.baobab_web_api_caller import BaobabWebApiCaller
+from baobab_web_api_caller.core.error_response_mapper import ErrorResponseMapper
+from baobab_web_api_caller.core.json_response_decoder import JsonResponseDecoder
 from baobab_web_api_caller.core.request_url_builder import RequestUrlBuilder
+from baobab_web_api_caller.core.response_decoder import ResponseDecoder
 from baobab_web_api_caller.exceptions.timeout_exception import TimeoutException
 from baobab_web_api_caller.exceptions.transport_exception import TransportException
 from baobab_web_api_caller.transport.requests_session_factory import RequestsSessionFactory
@@ -30,6 +33,8 @@ class HttpTransportCaller(BaobabWebApiCaller):
     session_factory: RequestsSessionFactory
     url_builder: RequestUrlBuilder
     default_header_provider: DefaultHeaderProvider
+    response_decoder: ResponseDecoder
+    error_response_mapper: ErrorResponseMapper
 
     @classmethod
     def from_service_config(
@@ -44,6 +49,8 @@ class HttpTransportCaller(BaobabWebApiCaller):
             default_header_provider=DefaultHeaderProvider(
                 default_headers=service_config.default_headers
             ),
+            response_decoder=JsonResponseDecoder(),
+            error_response_mapper=ErrorResponseMapper(),
         )
 
     def call(self, request: BaobabRequest) -> BaobabResponse:
@@ -74,24 +81,19 @@ class HttpTransportCaller(BaobabWebApiCaller):
         except requests.RequestException as exc:  # pragma: no cover
             raise TransportException(str(exc)) from exc
 
-        return self._to_baobab_response(response)
+        raw = self._to_baobab_response(response)
+        decoded = self.response_decoder.decode(raw)
+        self.error_response_mapper.raise_for_error(decoded)
+        return decoded
 
     @staticmethod
     def _to_baobab_response(response: requests.Response) -> BaobabResponse:
         headers: dict[str, str] = {str(k): str(v) for k, v in response.headers.items()}
-
-        json_data: object | None = None
-        content_type = headers.get("Content-Type", "")
-        if "application/json" in content_type.lower():
-            try:
-                json_data = response.json()
-            except ValueError:
-                json_data = None
 
         return BaobabResponse(
             status_code=response.status_code,
             headers=headers,
             text=response.text,
             content=response.content,
-            json_data=json_data,
+            json_data=None,
         )
