@@ -14,6 +14,20 @@
 ### Impact
 - Les couches supérieures peuvent s'appuyer sur un transport qui renvoie des réponses décodées et des erreurs normalisées.
 
+## 2026-03-17 18:04:53
+
+### Modifications
+- Ajout du sous-package `download` et du composant `BulkFileDownloader` (streaming par chunks).
+- Écriture atomique via fichier `.part` puis renommage pour éviter les fichiers partiels.
+- Ajout d’un exemple minimal d’utilisation dans `docs/examples/`.
+- Ajout/ajustement des tests unitaires (streaming, erreurs HTTP, timeouts, collision de fichier).
+
+### Buts
+- Télécharger des ressources distantes volumineuses sans les charger en mémoire (streaming).
+
+### Impact
+- La librairie supporte désormais un cas d’usage “fichier” séparé de la consommation JSON.
+
 ## 2026-03-17 17:54:47
 
 ### Modifications
