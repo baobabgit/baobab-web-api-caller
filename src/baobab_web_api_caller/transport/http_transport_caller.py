@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Final
 
 import requests
 
@@ -15,9 +16,14 @@ from baobab_web_api_caller.core.error_response_mapper import ErrorResponseMapper
 from baobab_web_api_caller.core.json_response_decoder import JsonResponseDecoder
 from baobab_web_api_caller.core.request_url_builder import RequestUrlBuilder
 from baobab_web_api_caller.core.response_decoder import ResponseDecoder
+from baobab_web_api_caller.exceptions.rate_limit_exception import RateLimitException
+from baobab_web_api_caller.exceptions.server_http_exception import ServerHttpException
 from baobab_web_api_caller.exceptions.timeout_exception import TimeoutException
 from baobab_web_api_caller.exceptions.transport_exception import TransportException
 from baobab_web_api_caller.transport.requests_session_factory import RequestsSessionFactory
+from baobab_web_api_caller.transport.system_sleeper import SystemSleeper
+from baobab_web_api_caller.transport.system_time_provider import SystemTimeProvider
+from baobab_web_api_caller.transport.throttler import Throttler
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,6 +41,7 @@ class HttpTransportCaller(BaobabWebApiCaller):
     default_header_provider: DefaultHeaderProvider
     response_decoder: ResponseDecoder
     error_response_mapper: ErrorResponseMapper
+    throttler: Throttler
 
     @classmethod
     def from_service_config(
@@ -42,6 +49,11 @@ class HttpTransportCaller(BaobabWebApiCaller):
     ) -> "HttpTransportCaller":
         """Construit un transport à partir d'une configuration de service."""
 
+        throttler: Final[Throttler] = Throttler(
+            rate_limit_policy=service_config.rate_limit_policy,
+            time_provider=SystemTimeProvider(),
+            sleeper=SystemSleeper(),
+        )
         return cls(
             service_config=service_config,
             session_factory=session_factory,
@@ -51,6 +63,7 @@ class HttpTransportCaller(BaobabWebApiCaller):
             ),
             response_decoder=JsonResponseDecoder(),
             error_response_mapper=ErrorResponseMapper(),
+            throttler=throttler,
         )
 
     def call(self, request: BaobabRequest) -> BaobabResponse:
@@ -66,6 +79,58 @@ class HttpTransportCaller(BaobabWebApiCaller):
         url = self.url_builder.build(prepared)
         session = self.session_factory.create()
 
+        retry_policy = self.service_config.retry_policy
+        last_error: Exception | None = None
+        for attempt in range(1, retry_policy.max_attempts + 1):
+            self.throttler.throttle()
+            result = self._try_call_once(session, prepared, url, timeout)
+
+            if isinstance(result, BaobabResponse):
+                if self._is_retryable_status_code(result.status_code):
+                    last_error = self._exception_for_retryable_status(result.status_code)
+                    if attempt >= retry_policy.max_attempts:
+                        self.error_response_mapper.raise_for_error(result)
+                else:
+                    self.error_response_mapper.raise_for_error(result)
+                    return result
+            else:
+                last_error = result
+                if attempt >= retry_policy.max_attempts:
+                    raise result
+
+            delay = self._compute_backoff_seconds(
+                attempt, retry_policy.backoff_seconds, retry_policy.backoff_multiplier
+            )
+            if delay > 0:
+                self.throttler.sleeper.sleep(delay)
+
+        if last_error is None:
+            raise TransportException("retry exhausted without error")
+        raise last_error
+
+    @staticmethod
+    def _compute_backoff_seconds(attempt: int, base: float, multiplier: float) -> float:
+        if attempt <= 0:
+            return 0.0
+        return float(base) * pow(float(multiplier), attempt - 1)
+
+    @staticmethod
+    def _is_retryable_status_code(status_code: int) -> bool:
+        return status_code == 429 or 500 <= status_code <= 599
+
+    @staticmethod
+    def _exception_for_retryable_status(status_code: int) -> Exception:
+        if status_code == 429:
+            return RateLimitException("HTTP 429 Too Many Requests")
+        return ServerHttpException(f"HTTP {status_code} Server Error")
+
+    def _try_call_once(
+        self,
+        session: requests.Session,
+        prepared: BaobabRequest,
+        url: str,
+        timeout: float | None,
+    ) -> BaobabResponse | Exception:
         try:
             response = session.request(
                 method=prepared.method.value,
@@ -76,15 +141,13 @@ class HttpTransportCaller(BaobabWebApiCaller):
                 data=dict(prepared.form_body) if prepared.form_body is not None else None,
                 timeout=timeout,
             )
-        except requests.Timeout as exc:  # pragma: no cover
-            raise TimeoutException(str(exc)) from exc
-        except requests.RequestException as exc:  # pragma: no cover
-            raise TransportException(str(exc)) from exc
+        except requests.Timeout as exc:
+            return TimeoutException(str(exc))
+        except requests.RequestException as exc:
+            return TransportException(str(exc))
 
         raw = self._to_baobab_response(response)
-        decoded = self.response_decoder.decode(raw)
-        self.error_response_mapper.raise_for_error(decoded)
-        return decoded
+        return self.response_decoder.decode(raw)
 
     @staticmethod
     def _to_baobab_response(response: requests.Response) -> BaobabResponse:

@@ -14,6 +14,19 @@
 ### Impact
 - Les couches supérieures peuvent s'appuyer sur un transport qui renvoie des réponses décodées et des erreurs normalisées.
 
+## 2026-03-17 17:26:45
+
+### Modifications
+- Intégration effective de `RetryPolicy` et `RateLimitPolicy` dans `HttpTransportCaller`.
+- Ajout d’abstractions de temps/attente injectables pour des tests déterministes.
+- Ajout de tests couvrant : succès immédiat, succès après retry, échec final, throttling (intervalle minimal).
+
+### Buts
+- Rendre le transport plus robuste face aux erreurs temporaires et aux limitations de débit, sans tests instables.
+
+### Impact
+- Les appels HTTP peuvent être rejoués de manière contrôlée et respecter un débit minimal configuré.
+
 ## 2026-03-17 17:04:47
 
 ### Modifications
