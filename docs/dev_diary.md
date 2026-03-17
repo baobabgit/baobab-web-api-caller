@@ -1,5 +1,18 @@
 # Journal de développement
 
+## 2026-03-17 16:17:57
+
+### Modifications
+- Ajout du sous-package `config` (ServiceConfig, RetryPolicy, RateLimitPolicy, DefaultHeaderProvider).
+- Ajout des tests unitaires en miroir avec validations (URLs, headers, paramètres de politiques).
+- Factorisation de la validation des mappings `str -> str` dans `utils/mapping_utils.py`.
+
+### Buts
+- Centraliser la configuration transverse des services distants et préparer l’usage par transport/façade.
+
+### Impact
+- Les couches futures pourront composer configuration, auth et politiques sans dépendances réseau.
+
 ## 2026-03-17 16:03:06
 
 ### Modifications

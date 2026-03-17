@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from types import MappingProxyType
 from typing import Mapping
 from urllib.parse import quote
 
 from baobab_web_api_caller.core.http_method import HttpMethod
 from baobab_web_api_caller.exceptions.configuration_exception import ConfigurationException
+from baobab_web_api_caller.utils.mapping_utils import freeze_str_mapping
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,13 +56,11 @@ class BaobabRequest:
             raise ConfigurationException("json_body and form_body are mutually exclusive")
 
         object.__setattr__(
-            self, "query_params", self._freeze_str_mapping(self.query_params, "query_params")
+            self, "query_params", freeze_str_mapping(self.query_params, "query_params")
         )
-        object.__setattr__(self, "headers", self._freeze_str_mapping(self.headers, "headers"))
+        object.__setattr__(self, "headers", freeze_str_mapping(self.headers, "headers"))
         if self.form_body is not None:
-            object.__setattr__(
-                self, "form_body", self._freeze_str_mapping(self.form_body, "form_body")
-            )
+            object.__setattr__(self, "form_body", freeze_str_mapping(self.form_body, "form_body"))
 
     @staticmethod
     def _normalize_and_validate_path(path: str) -> str:
@@ -82,20 +80,6 @@ class BaobabRequest:
 
         # Normalisation minimale: encode les caractères non sûrs sans toucher au '/'.
         return quote(stripped, safe="/-._~")
-
-    @staticmethod
-    def _freeze_str_mapping(value: Mapping[str, str], field_name: str) -> Mapping[str, str]:
-        if not isinstance(value, Mapping):
-            raise ConfigurationException(f"{field_name} must be a mapping")
-
-        frozen: dict[str, str] = {}
-        for k, v in value.items():
-            if not isinstance(k, str) or k.strip() == "":
-                raise ConfigurationException(f"{field_name} keys must be non-empty strings")
-            if not isinstance(v, str):
-                raise ConfigurationException(f"{field_name} values must be strings")
-            frozen[k] = v
-        return MappingProxyType(frozen)
 
     def with_header(self, name: str, value: str) -> "BaobabRequest":
         """Retourne une nouvelle requête avec un header ajouté/écrasé.
