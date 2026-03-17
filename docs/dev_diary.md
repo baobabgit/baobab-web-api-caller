@@ -1,5 +1,17 @@
 # Journal de développement
 
+## 2026-03-17 21:45:41
+
+### Modifications
+- Ajustement des métadonnées de packaging (`pyproject.toml`) pour passer en statut de maturité "Alpha" (Development Status :: 3 - Alpha).
+- Mise à jour du `README.md` pour distinguer l'installation utilisateur (`pip install baobab-web-api-caller`) de l'installation en mode développement (`pip install -e ".[dev]"`), et clarifier la section de validation locale (qualité).
+
+### Buts
+- Préparer une première release V1 crédible en reflétant un niveau de maturité réaliste et une expérience d’installation/validation explicite.
+
+### Impact
+- Les consommateurs disposent d’indications claires pour installer et valider la librairie, et les métadonnées de distribution reflètent mieux l’état actuel du projet.
+
 ## 2026-03-17 21:41:45
 
 ### Modifications

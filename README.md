@@ -20,7 +20,14 @@ vers des API REST.
 - **`pagination/`**: itération générique sur pages via “next page URL”.
 - **`download/`**: téléchargement streaming de fichiers (`BulkFileDownloader`).
 
-## Installation (dev)
+## Installation
+
+```bash
+python -m pip install -U pip
+python -m pip install baobab-web-api-caller
+```
+
+Pour un environnement de développement local :
 
 ```bash
 python -m pip install -U pip
@@ -41,7 +48,7 @@ Voir `docs/examples/pagination_minimal.py`.
 
 Voir `docs/examples/bulk_file_downloader_minimal.py`.
 
-## Validation locale
+## Validation locale (qualité)
 
 ```bash
 black .
