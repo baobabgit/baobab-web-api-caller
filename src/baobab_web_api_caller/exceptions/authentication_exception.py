@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from baobab_web_api_caller.exceptions.baobab_web_api_caller_exception import (
-    BaobabWebApiCallerException,
-)
+from baobab_web_api_caller.exceptions.http_exception import HttpException
 
 
-class AuthenticationException(BaobabWebApiCallerException):
-    """Erreur d'authentification (ex: credentials invalides, token expiré)."""
+class AuthenticationException(HttpException):
+    """Erreur d'authentification (ex: credentials invalides, token expiré).
+
+    Hérite de :class:`HttpException` afin d'exposer le contexte de réponse HTTP comme les autres
+    erreurs HTTP du projet.
+    """

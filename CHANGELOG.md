@@ -7,6 +7,9 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+### Added
+- Enrichissement des exceptions HTTP (`HttpException` et dérivées) avec `status_code`, extrait de body texte et sous-ensemble d'en-têtes utiles.
+
 ### Fixed
 - Fermeture explicite des `requests.Session` après chaque appel dans le transport synchrone.
 - Fermeture explicite des `requests.Response` (y compris en streaming) dans le downloader, pour éviter les fuites de ressources.

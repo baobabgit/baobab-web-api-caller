@@ -369,7 +369,10 @@ class TestHttpTransportCaller:
         response_decoder = Mock(spec=ResponseDecoder)
         response_decoder.decode.side_effect = lambda r: r
         error_mapper = Mock(spec=ErrorResponseMapper)
-        error_mapper.raise_for_error.side_effect = ServerHttpException("boom")
+        error_mapper.raise_for_error.side_effect = ServerHttpException(
+            status_code=503,
+            message="boom",
+        )
         caller = HttpTransportCaller(
             service_config=cfg,
             session_factory=FakeSessionFactory(session=session),
@@ -427,7 +430,10 @@ class TestHttpTransportCaller:
         response_decoder = Mock(spec=ResponseDecoder)
         response_decoder.decode.side_effect = lambda r: r
         error_mapper = Mock(spec=ErrorResponseMapper)
-        error_mapper.raise_for_error.side_effect = RateLimitException("boom")
+        error_mapper.raise_for_error.side_effect = RateLimitException(
+            status_code=429,
+            message="boom",
+        )
         caller = HttpTransportCaller(
             service_config=cfg,
             session_factory=FakeSessionFactory(session=session),

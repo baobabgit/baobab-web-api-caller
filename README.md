@@ -8,7 +8,7 @@ vers des API REST.
 - **Orienté objet et composition**: chaque brique (auth, config, transport, pagination, download) est injectable.
 - **Une classe par fichier**: structure stable et lisible.
 - **Modèles HTTP typés**: `BaobabRequest` / `BaobabResponse` indépendants du transport.
-- **Erreurs normalisées**: hiérarchie d’exceptions dédiée au projet.
+- **Erreurs normalisées**: hiérarchie d’exceptions dédiée au projet, enrichies avec le contexte HTTP utile (code, extrait de body, quelques headers).
 
 ## Architecture (aperçu)
 

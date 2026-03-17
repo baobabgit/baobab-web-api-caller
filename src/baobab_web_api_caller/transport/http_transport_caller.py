@@ -123,8 +123,14 @@ class HttpTransportCaller(BaobabWebApiCaller):
     @staticmethod
     def _exception_for_retryable_status(status_code: int) -> Exception:
         if status_code == 429:
-            return RateLimitException("HTTP 429 Too Many Requests")
-        return ServerHttpException(f"HTTP {status_code} Server Error")
+            return RateLimitException(
+                status_code=status_code,
+                message="HTTP 429 Too Many Requests",
+            )
+        return ServerHttpException(
+            status_code=status_code,
+            message=f"HTTP {status_code} Server Error",
+        )
 
     def _try_call_once(
         self,

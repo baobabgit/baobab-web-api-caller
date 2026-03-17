@@ -25,8 +25,22 @@ class TestHttpExceptions:
     def test_http_exceptions_instantiation(self) -> None:
         """Vérifie l'instanciation."""
 
-        assert str(HttpException("http")) == "http"
-        assert str(ClientHttpException("client")) == "client"
-        assert str(ServerHttpException("server")) == "server"
-        assert str(ResourceNotFoundException("404")) == "404"
-        assert str(RateLimitException("429")) == "429"
+        base = HttpException(status_code=400, message="http")
+        assert str(base) == "http"
+        assert base.status_code == 400
+
+        client = ClientHttpException(status_code=418, message="client")
+        assert str(client) == "client"
+        assert client.status_code == 418
+
+        server = ServerHttpException(status_code=500, message="server")
+        assert str(server) == "server"
+        assert server.status_code == 500
+
+        not_found = ResourceNotFoundException(status_code=404, message="404")
+        assert str(not_found) == "404"
+        assert not_found.status_code == 404
+
+        rate_limit = RateLimitException(status_code=429, message="429")
+        assert str(rate_limit) == "429"
+        assert rate_limit.status_code == 429
