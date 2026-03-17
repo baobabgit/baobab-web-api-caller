@@ -257,7 +257,8 @@ Cette classe doit :
 ### 6.8 Gestion des erreurs
 
 Le projet doit prévoir un composant chargé de transformer les réponses en erreur en exceptions
-métier du projet.
+métier du projet, en exposant un contexte HTTP utile au diagnostic (code, extrait de body texte,
+certaines métadonnées).
 
 Ce composant doit permettre de mapper au minimum :
 - les erreurs de configuration ;
@@ -271,7 +272,8 @@ Ce composant doit permettre de mapper au minimum :
 
 ### 6.9 Pagination
 
-Le projet doit fournir une brique dédiée à l'exploitation des réponses paginées.
+Le projet doit fournir une brique dédiée à l'exploitation des réponses paginées, y compris lorsque
+la query string comporte des paramètres multi-valués.
 
 Cette brique doit permettre :
 - d'extraire les éléments d'une page ;
