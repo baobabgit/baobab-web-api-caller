@@ -5,6 +5,12 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [Unreleased]
+
+### Fixed
+- Fermeture explicite des `requests.Session` après chaque appel dans le transport synchrone.
+- Fermeture explicite des `requests.Response` (y compris en streaming) dans le downloader, pour éviter les fuites de ressources.
+
 ## [0.1.0] - 2026-03-17
 
 ### Added

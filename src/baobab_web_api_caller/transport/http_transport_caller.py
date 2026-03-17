@@ -78,34 +78,37 @@ class HttpTransportCaller(BaobabWebApiCaller):
             session_factory=self.session_factory,
         )
 
-        retry_policy = self.service_config.retry_policy
-        last_error: Exception | None = None
-        for attempt in range(1, retry_policy.max_attempts + 1):
-            self.throttler.throttle()
-            result = self._try_call_once(ctx.session, ctx.prepared_request, ctx.url, ctx.timeout)
+        try:
+            retry_policy = self.service_config.retry_policy
+            last_error: Exception | None = None
+            for attempt in range(1, retry_policy.max_attempts + 1):
+                self.throttler.throttle()
+                result = self._try_call_once(ctx.session, ctx.prepared_request, ctx.url, ctx.timeout)
 
-            if isinstance(result, BaobabResponse):
-                if self._is_retryable_status_code(result.status_code):
-                    last_error = self._exception_for_retryable_status(result.status_code)
-                    if attempt >= retry_policy.max_attempts:
+                if isinstance(result, BaobabResponse):
+                    if self._is_retryable_status_code(result.status_code):
+                        last_error = self._exception_for_retryable_status(result.status_code)
+                        if attempt >= retry_policy.max_attempts:
+                            self.error_response_mapper.raise_for_error(result)
+                    else:
                         self.error_response_mapper.raise_for_error(result)
+                        return result
                 else:
-                    self.error_response_mapper.raise_for_error(result)
-                    return result
-            else:
-                last_error = result
-                if attempt >= retry_policy.max_attempts:
-                    raise result
+                    last_error = result
+                    if attempt >= retry_policy.max_attempts:
+                        raise result
 
-            delay = self._compute_backoff_seconds(
-                attempt, retry_policy.backoff_seconds, retry_policy.backoff_multiplier
-            )
-            if delay > 0:
-                self.throttler.sleeper.sleep(delay)
+                delay = self._compute_backoff_seconds(
+                    attempt, retry_policy.backoff_seconds, retry_policy.backoff_multiplier
+                )
+                if delay > 0:
+                    self.throttler.sleeper.sleep(delay)
 
-        if last_error is None:
-            raise TransportException("retry exhausted without error")
-        raise last_error
+            if last_error is None:
+                raise TransportException("retry exhausted without error")
+            raise last_error
+        finally:
+            ctx.session.close()
 
     @staticmethod
     def _compute_backoff_seconds(attempt: int, base: float, multiplier: float) -> float:
@@ -130,6 +133,7 @@ class HttpTransportCaller(BaobabWebApiCaller):
         url: str,
         timeout: float | None,
     ) -> BaobabResponse | Exception:
+        response: requests.Response | None = None
         try:
             response = session.request(
                 method=prepared.method.value,
@@ -145,8 +149,11 @@ class HttpTransportCaller(BaobabWebApiCaller):
         except requests.RequestException as exc:
             return TransportException(str(exc))
 
-        raw = self._to_baobab_response(response)
-        return self.response_decoder.decode(raw)
+        try:
+            raw = self._to_baobab_response(response)
+            return self.response_decoder.decode(raw)
+        finally:
+            response.close()
 
     @staticmethod
     def _to_baobab_response(response: requests.Response) -> BaobabResponse:

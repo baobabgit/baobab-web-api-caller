@@ -94,6 +94,8 @@ class TestBulkFileDownloader:
         assert saved == out
         assert out.read_bytes() == b"abcd"
         session.request.assert_called_once()
+        session.close.assert_called_once()
+        response.close.assert_called_once()
         assert session.request.call_args.kwargs["stream"] is True
 
     def test_download_raises_on_existing_file_when_no_overwrite(self, tmp_path: Path) -> None:
@@ -134,6 +136,8 @@ class TestBulkFileDownloader:
 
         _ = downloader.download(req, output_path=out, overwrite=True)
         assert out.read_bytes() == b"new"
+        session.close.assert_called_once()
+        response.close.assert_called_once()
 
     def test_timeout_is_wrapped(self, tmp_path: Path) -> None:
         """Wrappe requests.Timeout en TimeoutException."""
@@ -151,6 +155,7 @@ class TestBulkFileDownloader:
 
         with pytest.raises(TimeoutException):
             downloader.download(req, output_path=out)
+        session.close.assert_called_once()
 
     def test_http_error_is_mapped(self, tmp_path: Path) -> None:
         """Mappe une réponse HTTP en exception projet."""
@@ -173,3 +178,5 @@ class TestBulkFileDownloader:
 
         with pytest.raises(ResourceNotFoundException):
             downloader.download(req, output_path=out)
+        session.close.assert_called_once()
+        response.close.assert_called_once()

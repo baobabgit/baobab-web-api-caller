@@ -1,5 +1,20 @@
 # Journal de développement
 
+## 2026-03-17 18:50:44
+
+### Modifications
+- Fermeture explicite de la `requests.Session` dans `HttpTransportCaller` (via `finally`) afin d’éviter toute fuite de ressources, y compris en cas de retry/exception.
+- Fermeture explicite de chaque `requests.Response` dans `HttpTransportCaller` après décodage (appel à `response.close()`).
+- Fermeture explicite de la `requests.Session` et de la `requests.Response` streaming dans `BulkFileDownloader` (fermeture garantie même en cas d’erreur HTTP ou d’exception d’écriture).
+- Ajustement des tests unitaires pour vérifier la fermeture effective de la session et des réponses côté transport et downloader.
+- Mise à jour du `CHANGELOG.md` (section `Unreleased` / correctifs de cycle de vie des ressources HTTP).
+
+### Buts
+- Corriger le cycle de vie des ressources réseau (`requests.Session` / `requests.Response`) pour éviter les fuites de sockets/connexions.
+
+### Impact
+- Le transport synchrone et le downloader libèrent désormais systématiquement les ressources HTTP, sans changer l’API publique ni le modèle de composition existant.
+
 ## 2026-03-17 16:53:52
 
 ### Modifications
