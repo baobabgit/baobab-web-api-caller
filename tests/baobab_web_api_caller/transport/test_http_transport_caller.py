@@ -12,6 +12,10 @@ from baobab_web_api_caller.auth.bearer_authentication_strategy import BearerAuth
 from baobab_web_api_caller.config.service_config import ServiceConfig
 from baobab_web_api_caller.core.baobab_request import BaobabRequest
 from baobab_web_api_caller.core.http_method import HttpMethod
+from baobab_web_api_caller.exceptions.resource_not_found_exception import (
+    ResourceNotFoundException,
+)
+from baobab_web_api_caller.exceptions.response_decoding_exception import ResponseDecodingException
 from baobab_web_api_caller.exceptions.timeout_exception import TimeoutException
 from baobab_web_api_caller.exceptions.transport_exception import TransportException
 from baobab_web_api_caller.transport.http_transport_caller import HttpTransportCaller
@@ -130,4 +134,46 @@ class TestHttpTransportCaller:
         req = BaobabRequest(method=HttpMethod.GET, path="/x", query_params={}, headers={})
 
         with pytest.raises(TransportException):
+            caller.call(req)
+
+    def test_http_404_is_mapped(self) -> None:
+        """404 -> ResourceNotFoundException."""
+
+        response = Mock(spec=requests.Response)
+        response.status_code = 404
+        response.headers = {"Content-Type": "application/json"}
+        response.content = b'{"error": "not found"}'
+        response.text = '{"error": "not found"}'
+
+        session = Mock(spec=requests.Session)
+        session.request.return_value = response
+
+        cfg = ServiceConfig(base_url="https://example.com")
+        caller = HttpTransportCaller.from_service_config(
+            service_config=cfg, session_factory=FakeSessionFactory(session=session)
+        )
+        req = BaobabRequest(method=HttpMethod.GET, path="/x", query_params={}, headers={})
+
+        with pytest.raises(ResourceNotFoundException):
+            caller.call(req)
+
+    def test_invalid_json_is_mapped_to_decoding_exception(self) -> None:
+        """JSON invalide -> ResponseDecodingException."""
+
+        response = Mock(spec=requests.Response)
+        response.status_code = 200
+        response.headers = {"Content-Type": "application/json"}
+        response.content = b"{not json"
+        response.text = "{not json"
+
+        session = Mock(spec=requests.Session)
+        session.request.return_value = response
+
+        cfg = ServiceConfig(base_url="https://example.com")
+        caller = HttpTransportCaller.from_service_config(
+            service_config=cfg, session_factory=FakeSessionFactory(session=session)
+        )
+        req = BaobabRequest(method=HttpMethod.GET, path="/x", query_params={}, headers={})
+
+        with pytest.raises(ResponseDecodingException):
             caller.call(req)
