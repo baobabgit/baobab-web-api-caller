@@ -1,5 +1,17 @@
 # Journal de développement
 
+## 2026-03-17 21:54:57
+
+### Modifications
+- Audit complet de l’arborescence `src/baobab_web_api_caller` et `tests/baobab_web_api_caller` pour vérifier la granularité miroir des tests (un fichier de test par classe, arborescence alignée, classes abstraites testées via implémentations concrètes).
+- Validation que tous les composants prioritaires (transport, pagination, core, exceptions, auth) disposent déjà de fichiers de test dédiés et respectent les conventions (`Test...`, arborescence miroir, doubles concrets pour les abstractions).
+
+### Buts
+- Confirmer la conformité de la suite de tests aux contraintes de développement sans introduire de refactoring inutile.
+
+### Impact
+- Aucune modification de code ou de tests n’a été nécessaire ; la couverture globale (>= 90 %) et la structure miroir des tests sont déjà conformes aux contraintes du projet.
+
 ## 2026-03-17 21:45:41
 
 ### Modifications
