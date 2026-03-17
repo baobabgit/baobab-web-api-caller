@@ -1,5 +1,18 @@
 # Journal de développement
 
+## 2026-03-17 16:03:06
+
+### Modifications
+- Ajout du sous-package `auth` avec l’abstraction `AuthenticationStrategy` et des stratégies composables.
+- Implémentations: no-auth, bearer, basic, api-key header et api-key query.
+- Ajout des tests unitaires en miroir (headers, query params, cas limites) et validations des paramètres.
+
+### Buts
+- Fournir une authentification par composition appliquée aux requêtes, sans dépendre du transport HTTP.
+
+### Impact
+- Les couches futures pourront injecter la stratégie d’authentification via configuration et l’appliquer avant l’appel réseau.
+
 ## 2026-03-17 15:49:38
 
 ### Modifications
