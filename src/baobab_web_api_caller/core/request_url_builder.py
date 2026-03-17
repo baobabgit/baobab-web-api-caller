@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Sequence
 from urllib.parse import urlencode
 
 from baobab_web_api_caller.core.baobab_request import BaobabRequest
@@ -40,6 +41,13 @@ class RequestUrlBuilder:
 
         url = f"{self.base_url}{request.path}"
         if request.query_params:
-            query = urlencode(dict(request.query_params), doseq=False, safe=":/")
+            items: list[tuple[str, str]] = []
+            for key, value in request.query_params.items():
+                if isinstance(value, str):
+                    items.append((key, value))
+                else:
+                    for v in value:
+                        items.append((key, v))
+            query = urlencode(items, doseq=True, safe=":/")
             return f"{url}?{query}"
         return url

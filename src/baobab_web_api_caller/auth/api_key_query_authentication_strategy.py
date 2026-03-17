@@ -34,8 +34,21 @@ class ApiKeyQueryAuthenticationStrategy(AuthenticationStrategy):
     def apply(self, request: BaobabRequest) -> BaobabRequest:
         """Ajoute/écrase le paramètre API key."""
 
-        query_params = dict(request.query_params)
-        query_params[self.param_name] = self.api_key
+        query_params: dict[str, str | list[str]] = {}
+        for key, value in request.query_params.items():
+            if isinstance(value, str):
+                query_params[key] = value
+            else:
+                query_params[key] = list(value)
+
+        existing = query_params.get(self.param_name)
+        if existing is None:
+            query_params[self.param_name] = self.api_key
+        elif isinstance(existing, str):
+            query_params[self.param_name] = [existing, self.api_key]
+        else:
+            existing.append(self.api_key)
+
         return BaobabRequest(
             method=request.method,
             path=request.path,

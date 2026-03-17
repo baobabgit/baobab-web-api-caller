@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping
+from types import MappingProxyType
+from typing import Mapping, Sequence
 from urllib.parse import quote
 
 from baobab_web_api_caller.core.http_method import HttpMethod
@@ -22,7 +23,9 @@ class BaobabRequest:
     :param path: Chemin relatif (ex: ``/v1/items``).
     :type path: str
     :param query_params: Paramètres de query string.
-    :type query_params: Mapping[str, str]
+        Les valeurs peuvent être soit une chaîne (clé simple), soit une séquence de chaînes pour
+        représenter des clés répétées.
+    :type query_params: Mapping[str, str | Sequence[str]]
     :param headers: En-têtes HTTP.
     :type headers: Mapping[str, str]
     :param json_body: Corps JSON (déjà sérialisé en types Python).
@@ -36,7 +39,7 @@ class BaobabRequest:
 
     method: HttpMethod
     path: str
-    query_params: Mapping[str, str]
+    query_params: Mapping[str, str | Sequence[str]]
     headers: Mapping[str, str]
     json_body: object | None = None
     form_body: Mapping[str, str] | None = None
@@ -55,12 +58,40 @@ class BaobabRequest:
         if self.json_body is not None and self.form_body is not None:
             raise ConfigurationException("json_body and form_body are mutually exclusive")
 
-        object.__setattr__(
-            self, "query_params", freeze_str_mapping(self.query_params, "query_params")
-        )
+        object.__setattr__(self, "query_params", self._freeze_query_params(self.query_params))
         object.__setattr__(self, "headers", freeze_str_mapping(self.headers, "headers"))
         if self.form_body is not None:
             object.__setattr__(self, "form_body", freeze_str_mapping(self.form_body, "form_body"))
+
+    @staticmethod
+    def _freeze_query_params(
+        value: Mapping[str, str | Sequence[str]],
+    ) -> Mapping[str, str | Sequence[str]]:
+        if not isinstance(value, Mapping):
+            raise ConfigurationException("query_params must be a mapping")
+
+        frozen: dict[str, str | tuple[str, ...]] = {}
+        for k, v in value.items():
+            if not isinstance(k, str) or k.strip() == "":
+                raise ConfigurationException("query_params keys must be non-empty strings")
+
+            if isinstance(v, str):
+                frozen[k] = v
+            else:
+                if not isinstance(v, Sequence):
+                    raise ConfigurationException(
+                        "query_params values must be strings or sequences of strings"
+                    )
+                collected: list[str] = []
+                for item in v:
+                    if not isinstance(item, str):
+                        raise ConfigurationException(
+                            "query_params sequence values must be strings"
+                        )
+                    collected.append(item)
+                frozen[k] = tuple(collected)
+
+        return MappingProxyType(frozen)
 
     @staticmethod
     def _normalize_and_validate_path(path: str) -> str:

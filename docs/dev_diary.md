@@ -1,5 +1,20 @@
 # Journal de développement
 
+## 2026-03-17 19:23:50
+
+### Modifications
+- Évolution de `BaobabRequest` pour accepter des query params typés `Mapping[str, str | Sequence[str]]`, avec gel et validation des valeurs uniques ou séquentielles.
+- Mise à jour de `RequestUrlBuilder` pour encoder correctement les clés répétées (via `urlencode` avec `doseq=True`) et conserver toutes les valeurs.
+- Adaptation de `Paginator._parse_query_params` pour reconstruire des valeurs uniques ou listées à partir de `next_page_url`, préservant les paramètres dupliqués entre les pages.
+- Mise à jour de `ApiKeyQueryAuthenticationStrategy` pour ajouter l’API key sans écraser les valeurs existantes (conversion en séquence si nécessaire).
+- Ajout/ajustement des tests unitaires (`RequestUrlBuilder`, `Paginator`, `ApiKeyQueryAuthenticationStrategy`) pour couvrir clés simples, clés répétées, mélange de clés et pagination avec paramètres dupliqués.
+
+### Buts
+- Supporter proprement les cas de query string avec clés répétées tout en conservant la simplicité de l’API publique et la compatibilité V1.
+
+### Impact
+- Les appels HTTP peuvent désormais transporter des paramètres multi-valués de manière explicite et stable, y compris via l’authentification par query param et la pagination, sans régression sur les usages existants.
+
 ## 2026-03-17 19:02:00
 
 ### Modifications
