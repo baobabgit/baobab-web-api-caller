@@ -20,6 +20,7 @@ from baobab_web_api_caller.exceptions.rate_limit_exception import RateLimitExcep
 from baobab_web_api_caller.exceptions.server_http_exception import ServerHttpException
 from baobab_web_api_caller.exceptions.timeout_exception import TimeoutException
 from baobab_web_api_caller.exceptions.transport_exception import TransportException
+from baobab_web_api_caller.transport.call_context_builder import build_call_context
 from baobab_web_api_caller.transport.requests_session_factory import RequestsSessionFactory
 from baobab_web_api_caller.transport.system_sleeper import SystemSleeper
 from baobab_web_api_caller.transport.system_time_provider import SystemTimeProvider
@@ -69,21 +70,19 @@ class HttpTransportCaller(BaobabWebApiCaller):
     def call(self, request: BaobabRequest) -> BaobabResponse:
         """Exécute une requête via `requests`."""
 
-        prepared = self.default_header_provider.apply(request)
-        prepared = self.service_config.authentication_strategy.apply(prepared)
-
-        timeout = prepared.timeout_seconds
-        if timeout is None:
-            timeout = self.service_config.default_timeout_seconds
-
-        url = self.url_builder.build(prepared)
-        session = self.session_factory.create()
+        ctx = build_call_context(
+            request=request,
+            service_config=self.service_config,
+            default_header_provider=self.default_header_provider,
+            url_builder=self.url_builder,
+            session_factory=self.session_factory,
+        )
 
         retry_policy = self.service_config.retry_policy
         last_error: Exception | None = None
         for attempt in range(1, retry_policy.max_attempts + 1):
             self.throttler.throttle()
-            result = self._try_call_once(session, prepared, url, timeout)
+            result = self._try_call_once(ctx.session, ctx.prepared_request, ctx.url, ctx.timeout)
 
             if isinstance(result, BaobabResponse):
                 if self._is_retryable_status_code(result.status_code):
