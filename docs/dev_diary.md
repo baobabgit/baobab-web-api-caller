@@ -1,5 +1,17 @@
 # Journal de développement
 
+## 2026-03-17 21:41:45
+
+### Modifications
+- Alignement de la documentation externe (`README.md`) avec les capacités actuelles de pagination et de query params (clarification de ce qui reste hors V1).
+- Mise à jour de `docs/01_specifications.md` pour préciser que le mapping d’erreurs expose un contexte HTTP utile (code, extrait de body, métadonnées) et que la pagination prend en compte les query params multi-valués.
+
+### Buts
+- Resynchroniser la documentation avec l’état réel du code sans introduire de nouvelles promesses fonctionnelles.
+
+### Impact
+- Les lecteurs disposent d’une description fidèle des capacités de transport, de mapping d’erreurs et de pagination, cohérente avec l’implémentation actuelle.
+
 ## 2026-03-17 19:23:50
 
 ### Modifications

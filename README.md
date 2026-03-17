@@ -56,5 +56,5 @@ pytest
 
 - **Retry avancé**: gestion de `Retry-After` (429) et erreurs 408/502/503/504 configurables.
 - **Async**: transport asynchrone (httpx/aiohttp) et streaming async.
-- **Pagination enrichie**: support des clés dupliquées en query string (liste), limites de pages, etc.
+- **Pagination enrichie**: cas plus avancés (limites de pages, stratégies de navigation, etc.).
 
