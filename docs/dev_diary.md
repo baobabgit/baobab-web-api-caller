@@ -14,6 +14,19 @@
 ### Impact
 - Les couches supérieures peuvent s'appuyer sur un transport qui renvoie des réponses décodées et des erreurs normalisées.
 
+## 2026-03-17 17:54:47
+
+### Modifications
+- Ajout du sous-package `pagination` (contrats et implémentation génériques).
+- Ajout des composants `PageResult`, `PageExtractor`, `NextPageUrlExtractor` et `Paginator`.
+- Ajout de tests multi-pages (URLs relatives, URL absolue rejetée si host différent).
+
+### Buts
+- Permettre d’itérer simplement sur des ressources paginées dont la page suivante est déterminée par le contenu.
+
+### Impact
+- Les couches applicatives peuvent consommer des pages/items en restant découplées du format exact des réponses.
+
 ## 2026-03-17 17:26:45
 
 ### Modifications
