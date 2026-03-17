@@ -91,9 +91,14 @@ class Paginator(Generic[TItem]):
         )
 
     @staticmethod
-    def _parse_query_params(query: str) -> dict[str, str]:
-        # V1: les clés dupliquées sont écrasées par la dernière occurrence.
-        params: dict[str, str] = {}
+    def _parse_query_params(query: str) -> dict[str, str | list[str]]:
+        params: dict[str, str | list[str]] = {}
         for k, v in parse_qsl(query, keep_blank_values=True, strict_parsing=False):
-            params[k] = v
+            existing = params.get(k)
+            if existing is None:
+                params[k] = v
+            elif isinstance(existing, list):
+                existing.append(v)
+            else:
+                params[k] = [existing, v]
         return params
