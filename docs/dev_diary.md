@@ -14,6 +14,21 @@
 ### Impact
 - Les couches supérieures peuvent s'appuyer sur un transport qui renvoie des réponses décodées et des erreurs normalisées.
 
+## 2026-03-17 18:17:02
+
+### Modifications
+- Enrichissement de `README.md` (principes, architecture, pointeurs vers exemples).
+- Ajout d’exemples supplémentaires dans `docs/examples/` (service caller, pagination).
+- Nettoyage de l’API publique au niveau package (`baobab_web_api_caller.__init__`).
+- Durcissement des tests du downloader (validations + overwrite).
+- Mise à jour du `CHANGELOG.md`.
+
+### Buts
+- Consolider la documentation, l’API publique et la qualité globale en préparation de la V1.
+
+### Impact
+- Documentation et exemples plus complets, et meilleure ergonomie d’import côté utilisateur.
+
 ## 2026-03-17 18:04:53
 
 ### Modifications
