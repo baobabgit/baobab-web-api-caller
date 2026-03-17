@@ -1,5 +1,19 @@
 # Journal de développement
 
+## 2026-03-17 16:45:32
+
+### Modifications
+- Ajout du contrat `BaobabWebApiCaller` et du builder `RequestUrlBuilder`.
+- Ajout du transport HTTP synchrone basé sur `requests` (factory de session + caller).
+- Ajout des tests unitaires avec mocks/doubles (construction d’URL, assemblage headers/auth/timeout, wrapping des erreurs).
+- Ajout de la dépendance runtime `requests` dans `pyproject.toml`.
+
+### Buts
+- Fournir une exécution HTTP synchrone testable et conforme à l’architecture par composition.
+
+### Impact
+- Les features suivantes pourront mapper les erreurs HTTP et enrichir le décodage sans changer le transport.
+
 ## 2026-03-17 16:17:57
 
 ### Modifications
