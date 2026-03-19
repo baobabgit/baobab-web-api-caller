@@ -80,6 +80,8 @@ class BulkFileDownloader:
         :rtype: Path
         :raises ConfigurationException: Si les paramètres sont invalides.
         :raises TimeoutException: En cas de timeout réseau.
+        :raises HttpException: Si la réponse HTTP indique une erreur (4xx/5xx), mappée via
+            `ErrorResponseMapper`.
         :raises TransportException: En cas d'erreur réseau ou d'écriture.
         """
 

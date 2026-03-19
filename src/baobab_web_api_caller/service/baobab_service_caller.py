@@ -27,30 +27,18 @@ class BaobabServiceCaller:
     def call(self, request: BaobabRequest) -> BaobabResponse:
         """Exécute une requête, en appliquant la configuration de service.
 
-        Cette méthode fusionne les headers par défaut avec les headers de la requête (la requête
-        prime), puis délègue l'exécution au caller bas niveau.
+        Cette méthode délègue l'exécution au caller bas niveau.
+
+        La fusion finale des headers par défaut (issus de `ServiceConfig.default_headers`) avec
+        les headers de la requête, ainsi que l'application d'éventuels mécanismes d'authentification,
+        sont traitées côté transport (`build_call_context`).
 
         :param request: Requête à exécuter.
         :type request: BaobabRequest
         :return: Réponse.
         :rtype: BaobabResponse
         """
-
-        merged_headers: dict[str, str] = dict(self.service_config.default_headers)
-        merged_headers.update(dict(request.headers))
-        if merged_headers == dict(request.headers):
-            return self.web_api_caller.call(request)
-
-        merged_request = BaobabRequest(
-            method=request.method,
-            path=request.path,
-            query_params=request.query_params,
-            headers=merged_headers,
-            json_body=request.json_body,
-            form_body=request.form_body,
-            timeout_seconds=request.timeout_seconds,
-        )
-        return self.web_api_caller.call(merged_request)
+        return self.web_api_caller.call(request)
 
     def get(
         self,
