@@ -20,4 +20,3 @@ class TestRateLimitException:
         exc = RateLimitException(status_code=429, message="429")
         assert str(exc) == "429"
         assert exc.status_code == 429
-

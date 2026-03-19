@@ -52,7 +52,7 @@ class BulkFileDownloader:
             error_response_mapper=ErrorResponseMapper(),
         )
 
-    def download(
+    def download(  # pylint: disable=too-many-branches,too-many-statements
         self,
         request: BaobabRequest,
         *,

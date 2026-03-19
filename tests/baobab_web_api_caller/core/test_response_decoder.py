@@ -27,7 +27,8 @@ class TestResponseDecoder:
         """La classe abstraite ne doit pas être instanciée."""
 
         with pytest.raises(TypeError):
-            ResponseDecoder()  # pyright: ignore[reportGeneralTypeIssues]
+            # pylint: disable=abstract-class-instantiated
+            ResponseDecoder()  # type: ignore[abstract]  # pyright: ignore[reportGeneralTypeIssues]
 
     def test_decode_contract_returns_response(self) -> None:
         """Une implémentation concrète renvoie une BaobabResponse."""
@@ -35,4 +36,3 @@ class TestResponseDecoder:
         response = BaobabResponse(status_code=200, headers={}, text="ok", json_data=None)
         out = FakeResponseDecoder().decode(response)
         assert out == response
-

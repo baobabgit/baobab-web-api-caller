@@ -35,4 +35,3 @@ class TestHttpException:
         assert "http" in rendered
         assert "body=bad body" in rendered
         assert "headers=X-Request-Id=abc" in rendered
-

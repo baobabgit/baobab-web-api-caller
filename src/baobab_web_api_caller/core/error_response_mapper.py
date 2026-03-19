@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import ClassVar, Mapping
 
 from baobab_web_api_caller.core.baobab_response import BaobabResponse
 from baobab_web_api_caller.exceptions.authentication_exception import AuthenticationException
@@ -107,7 +107,7 @@ class ErrorResponseMapper:
         return f"{stripped[:max_length]}…"
 
     @staticmethod
-    def _extract_diagnostic_headers(headers: dict[str, str]) -> dict[str, str] | None:
+    def _extract_diagnostic_headers(headers: Mapping[str, str]) -> dict[str, str] | None:
         interesting_keys = {
             "content-type",
             "x-request-id",

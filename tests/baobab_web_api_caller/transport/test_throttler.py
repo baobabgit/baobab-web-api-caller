@@ -54,13 +54,12 @@ class TestThrottler:
 
         # 1er appel: initialise _last_call_ts, pas de sleep
         throttler.throttle()
-        assert sleeps == []
-        assert throttler._last_call_ts == 0.0
+        assert not sleeps
+        assert throttler._last_call_ts == 0.0  # pylint: disable=protected-access
 
         # 2e appel: elapsed=0.2 -> remaining=0.8
         time_provider.now = 0.2
         throttler.throttle()
 
         assert sleeps == [0.8]
-        assert throttler._last_call_ts == 1.0
-
+        assert throttler._last_call_ts == 1.0  # pylint: disable=protected-access

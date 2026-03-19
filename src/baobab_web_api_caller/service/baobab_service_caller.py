@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping
+from typing import Mapping, Sequence
 
 from baobab_web_api_caller.config.service_config import ServiceConfig
 from baobab_web_api_caller.core.baobab_request import BaobabRequest
@@ -19,6 +19,10 @@ class BaobabServiceCaller:
     Cette classe construit des :class:`~baobab_web_api_caller.core.baobab_request.BaobabRequest`
     à partir d'une :class:`~baobab_web_api_caller.config.service_config.ServiceConfig` et délègue
     l'exécution à un :class:`~baobab_web_api_caller.core.baobab_web_api_caller.BaobabWebApiCaller`.
+
+    Les méthodes de convenance (``get``, ``post``, etc.) acceptent pour ``query_params`` le même
+    modèle que :class:`~baobab_web_api_caller.core.baobab_request.BaobabRequest` (``str`` ou
+    ``Sequence[str]`` par clé).
     """
 
     service_config: ServiceConfig
@@ -30,8 +34,8 @@ class BaobabServiceCaller:
         Cette méthode délègue l'exécution au caller bas niveau.
 
         La fusion finale des headers par défaut (issus de `ServiceConfig.default_headers`) avec
-        les headers de la requête, ainsi que l'application d'éventuels mécanismes d'authentification,
-        sont traitées côté transport (`build_call_context`).
+        les headers de la requête, ainsi que l'application d'éventuels mécanismes
+        d'authentification, sont traitées côté transport (`build_call_context`).
 
         :param request: Requête à exécuter.
         :type request: BaobabRequest
@@ -44,11 +48,15 @@ class BaobabServiceCaller:
         self,
         path: str,
         *,
-        query_params: Mapping[str, str] | None = None,
+        query_params: Mapping[str, str | Sequence[str]] | None = None,
         headers: Mapping[str, str] | None = None,
         timeout_seconds: float | None = None,
     ) -> BaobabResponse:
-        """Raccourci GET."""
+        """Raccourci GET.
+
+        :param query_params: Paramètres de query (même modèle que :class:`BaobabRequest`).
+        :type query_params: Mapping[str, str | Sequence[str]] | None
+        """
 
         req = BaobabRequest(
             method=HttpMethod.GET,
@@ -63,13 +71,17 @@ class BaobabServiceCaller:
         self,
         path: str,
         *,
-        query_params: Mapping[str, str] | None = None,
+        query_params: Mapping[str, str | Sequence[str]] | None = None,
         headers: Mapping[str, str] | None = None,
         json_body: object | None = None,
         form_body: Mapping[str, str] | None = None,
         timeout_seconds: float | None = None,
     ) -> BaobabResponse:
-        """Raccourci POST."""
+        """Raccourci POST.
+
+        :param query_params: Paramètres de query (même modèle que :class:`BaobabRequest`).
+        :type query_params: Mapping[str, str | Sequence[str]] | None
+        """
 
         req = BaobabRequest(
             method=HttpMethod.POST,
@@ -86,13 +98,17 @@ class BaobabServiceCaller:
         self,
         path: str,
         *,
-        query_params: Mapping[str, str] | None = None,
+        query_params: Mapping[str, str | Sequence[str]] | None = None,
         headers: Mapping[str, str] | None = None,
         json_body: object | None = None,
         form_body: Mapping[str, str] | None = None,
         timeout_seconds: float | None = None,
     ) -> BaobabResponse:
-        """Raccourci PUT."""
+        """Raccourci PUT.
+
+        :param query_params: Paramètres de query (même modèle que :class:`BaobabRequest`).
+        :type query_params: Mapping[str, str | Sequence[str]] | None
+        """
 
         req = BaobabRequest(
             method=HttpMethod.PUT,
@@ -109,13 +125,17 @@ class BaobabServiceCaller:
         self,
         path: str,
         *,
-        query_params: Mapping[str, str] | None = None,
+        query_params: Mapping[str, str | Sequence[str]] | None = None,
         headers: Mapping[str, str] | None = None,
         json_body: object | None = None,
         form_body: Mapping[str, str] | None = None,
         timeout_seconds: float | None = None,
     ) -> BaobabResponse:
-        """Raccourci PATCH."""
+        """Raccourci PATCH.
+
+        :param query_params: Paramètres de query (même modèle que :class:`BaobabRequest`).
+        :type query_params: Mapping[str, str | Sequence[str]] | None
+        """
 
         req = BaobabRequest(
             method=HttpMethod.PATCH,
@@ -132,11 +152,15 @@ class BaobabServiceCaller:
         self,
         path: str,
         *,
-        query_params: Mapping[str, str] | None = None,
+        query_params: Mapping[str, str | Sequence[str]] | None = None,
         headers: Mapping[str, str] | None = None,
         timeout_seconds: float | None = None,
     ) -> BaobabResponse:
-        """Raccourci DELETE."""
+        """Raccourci DELETE.
+
+        :param query_params: Paramètres de query (même modèle que :class:`BaobabRequest`).
+        :type query_params: Mapping[str, str | Sequence[str]] | None
+        """
 
         req = BaobabRequest(
             method=HttpMethod.DELETE,
@@ -151,11 +175,15 @@ class BaobabServiceCaller:
         self,
         path: str,
         *,
-        query_params: Mapping[str, str] | None = None,
+        query_params: Mapping[str, str | Sequence[str]] | None = None,
         headers: Mapping[str, str] | None = None,
         timeout_seconds: float | None = None,
     ) -> BaobabResponse:
-        """Raccourci HEAD."""
+        """Raccourci HEAD.
+
+        :param query_params: Paramètres de query (même modèle que :class:`BaobabRequest`).
+        :type query_params: Mapping[str, str | Sequence[str]] | None
+        """
 
         req = BaobabRequest(
             method=HttpMethod.HEAD,
@@ -170,11 +198,15 @@ class BaobabServiceCaller:
         self,
         path: str,
         *,
-        query_params: Mapping[str, str] | None = None,
+        query_params: Mapping[str, str | Sequence[str]] | None = None,
         headers: Mapping[str, str] | None = None,
         timeout_seconds: float | None = None,
     ) -> BaobabResponse:
-        """Raccourci OPTIONS."""
+        """Raccourci OPTIONS.
+
+        :param query_params: Paramètres de query (même modèle que :class:`BaobabRequest`).
+        :type query_params: Mapping[str, str | Sequence[str]] | None
+        """
 
         req = BaobabRequest(
             method=HttpMethod.OPTIONS,

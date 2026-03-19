@@ -26,5 +26,4 @@ class TestPageResult:
 
         page = PageResult(items=(1,), next_page_url=None)
         with pytest.raises(FrozenInstanceError):
-            page.next_page_url = "/other"
-
+            page.next_page_url = "/other"  # type: ignore[misc]

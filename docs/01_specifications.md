@@ -500,10 +500,17 @@ Composant chargé de construire l'URL finale à partir de la base URL, du path e
 Abstraction du décodage des réponses.
 
 #### `JsonResponseDecoder`
-Implémentation spécialisée pour le JSON.
+Implémentation spécialisée pour le JSON. Le décodage n’est tenté que si l’en-tête `Content-Type`
+indique `application/json` ou un type `application/*+json` (suffixe `+json`, sans tenir compte des
+paramètres tels que `charset`). Si l’en-tête est absent ou non JSON, la réponse est renvoyée telle
+quelle (pas de `json_data` ajouté). Corps vide ou JSON syntaxiquement invalide → exception projet
+(`ResponseDecodingException`).
 
 #### `ErrorResponseMapper`
-Transformation des erreurs HTTP et de contenu en exceptions du projet.
+Transformation des erreurs HTTP en exceptions du projet. Les messages privilégient une forme lisible
+`HTTP {code} {raison}` lorsque la raison standard est connue ; un extrait du corps texte et un
+sous-ensemble d’en-têtes (dont `WWW-Authenticate`, `Retry-After`, identifiants de corrélation, etc.)
+peuvent être portés par l’exception pour le diagnostic.
 
 ### 10.2 Couche `auth`
 
@@ -545,6 +552,8 @@ Factory de création de session HTTP synchrone.
 #### `BaobabServiceCaller`
 Façade de service et point d'entrée haut niveau. Ne fusionne pas les en-têtes avec la
 configuration : cette étape est réservée au transport (`build_call_context`).
+Les raccourcis HTTP (`get`, `post`, etc.) acceptent pour `query_params` le même typage que
+`BaobabRequest` (`Mapping[str, str | Sequence[str]]`).
 
 ### 10.6 Couche `pagination`
 
@@ -563,7 +572,9 @@ Itération sur les pages d'une collection paginée.
 ### 10.7 Couche `download`
 
 #### `BulkFileDownloader`
-Téléchargement streaming d'un fichier distant.
+Téléchargement streaming d'un fichier distant. Réutilise `build_call_context` (fusion d’en-têtes et
+auth comme pour un appel HTTP classique), ferme explicitement la session et la réponse après usage
+et mappe les erreurs HTTP via `ErrorResponseMapper`.
 
 ### 10.8 Couche `exceptions`
 

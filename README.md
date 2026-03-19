@@ -48,12 +48,19 @@ Voir `docs/examples/pagination_minimal.py`.
 
 Voir `docs/examples/bulk_file_downloader_minimal.py`.
 
+`BulkFileDownloader` utilise la même construction de contexte (`build_call_context`) que le transport
+classique et **ferme explicitement** la `requests.Session` et la `responses.Response` en streaming
+après l’appel (succès comme erreur), pour éviter les fuites ; les erreurs HTTP sont mappées via
+`ErrorResponseMapper`, comme dans `HttpTransportCaller`.
+
 ### Transport HTTP synchrone (comportement)
 Le transport synchrone (`HttpTransportCaller`) applique :
 - le throttling avant chaque tentative ;
 - le retry selon `RetryPolicy` (erreurs réseau, `429` et `5xx`) ;
 - le mapping des erreurs HTTP via `ErrorResponseMapper` ;
-- la fermeture explicite des sessions/réponses `requests` pour éviter les fuites.
+- la fermeture explicite des sessions/réponses `requests` pour éviter les fuites ;
+- le décodage JSON via `JsonResponseDecoder` uniquement pour `Content-Type: application/json` ou
+  `application/*+json` (sinon pas de décodage automatique du corps).
 
 ### En-têtes HTTP (fusion)
 La fusion finale des en-têtes est centralisée dans `build_call_context` (transport), dans cet ordre de
@@ -66,7 +73,8 @@ priorité croissante pour une même clé :
 La façade `BaobabServiceCaller` délègue la requête au transport sans fusionner les défauts elle-même.
 
 ### Paramètres de requête (query params)
-`BaobabRequest.query_params` supporte :
+`BaobabRequest.query_params` et le paramètre `query_params=` des raccourcis `BaobabServiceCaller`
+(`get`, `post`, etc.) supportent :
 - une valeur `str` pour une clé unique ;
 - une `Sequence[str]` pour des clés répétées (ex: `{"tag": ["a", "b"]}`).
 
@@ -113,6 +121,9 @@ python -m flake8
 python -m bandit -r src
 pytest
 ```
+
+Avant une **release** (tag, PyPI), suivre en plus `docs/release_validation_checklist.md` et vérifier
+le miroir des tests avec `python docs/verify_test_mirror.py` (attendu : `gaps 0`).
 
 ## Améliorations futures (hors V1)
 

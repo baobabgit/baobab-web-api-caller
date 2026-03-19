@@ -20,4 +20,3 @@ class TestServerHttpException:
         exc = ServerHttpException(status_code=500, message="server")
         assert str(exc) == "server"
         assert exc.status_code == 500
-

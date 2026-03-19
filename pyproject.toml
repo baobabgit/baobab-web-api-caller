@@ -74,6 +74,10 @@ disable = [
   "too-few-public-methods",
 ]
 
+[tool.pylint.SIMILARITIES]
+# Évite les R0801 artificiels entre fichiers de tests (doublons légitimes de helpers / requêtes).
+min-similarity-lines = 20
+
 [tool.pylint.FORMAT]
 max-line-length = 100
 

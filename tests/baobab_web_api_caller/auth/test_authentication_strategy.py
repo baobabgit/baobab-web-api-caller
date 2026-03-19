@@ -27,8 +27,10 @@ class TestAuthenticationStrategy:
     def test_is_abstract(self) -> None:
         """La classe abstraite ne doit pas être instanciée directement."""
 
+        cls = AuthenticationStrategy
         with pytest.raises(TypeError):
-            AuthenticationStrategy()  # pyright: ignore[reportGeneralTypeIssues]
+            # pylint: disable=abstract-class-instantiated
+            cls()  # type: ignore[abstract]  # pyright: ignore[reportGeneralTypeIssues]
 
     def test_apply_contract_returns_request(self) -> None:
         """Une stratégie concrète renvoie une requête typée."""
@@ -43,4 +45,3 @@ class TestAuthenticationStrategy:
         out = FakeAuthenticationStrategy().apply(req)
         assert isinstance(out, BaobabRequest)
         assert out == req
-

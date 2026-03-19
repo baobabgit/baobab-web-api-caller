@@ -29,7 +29,8 @@ class TestSleeper:
         """La classe abstraite ne doit pas être instanciée directement."""
 
         with pytest.raises(TypeError):
-            Sleeper()  # pyright: ignore[reportGeneralTypeIssues]
+            # pylint: disable=abstract-class-instantiated
+            Sleeper()  # type: ignore[abstract]  # pyright: ignore[reportGeneralTypeIssues]
 
     def test_fake_sleeper_records_seconds(self) -> None:
         """sleep() doit recevoir et stocker la durée demandée."""
@@ -37,4 +38,3 @@ class TestSleeper:
         sleeper = FakeSleeper()
         sleeper.sleep(1.25)
         assert sleeper.last_seconds == 1.25
-

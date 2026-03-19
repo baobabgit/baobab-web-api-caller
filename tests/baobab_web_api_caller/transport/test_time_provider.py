@@ -28,11 +28,11 @@ class TestTimeProvider:
         """La classe abstraite ne doit pas être instanciée."""
 
         with pytest.raises(TypeError):
-            TimeProvider()  # pyright: ignore[reportGeneralTypeIssues]
+            # pylint: disable=abstract-class-instantiated
+            TimeProvider()  # type: ignore[abstract]  # pyright: ignore[reportGeneralTypeIssues]
 
     def test_fake_time_provider_returns_value(self) -> None:
         """monotonic() doit renvoyer la valeur attendue."""
 
         provider = FakeTimeProvider(value=42.0)
         assert provider.monotonic() == 42.0
-

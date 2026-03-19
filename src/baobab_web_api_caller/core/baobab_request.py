@@ -85,9 +85,7 @@ class BaobabRequest:
                 collected: list[str] = []
                 for item in v:
                     if not isinstance(item, str):
-                        raise ConfigurationException(
-                            "query_params sequence values must be strings"
-                        )
+                        raise ConfigurationException("query_params sequence values must be strings")
                     collected.append(item)
                 frozen[k] = tuple(collected)
 

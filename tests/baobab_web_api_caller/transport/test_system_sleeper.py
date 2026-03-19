@@ -17,4 +17,3 @@ class TestSystemSleeper:
         with patch("baobab_web_api_caller.transport.system_sleeper.time.sleep") as mock_sleep:
             sleeper.sleep(0.25)
             mock_sleep.assert_called_once_with(0.25)
-

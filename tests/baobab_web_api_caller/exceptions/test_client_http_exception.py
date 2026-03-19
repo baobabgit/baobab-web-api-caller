@@ -20,4 +20,3 @@ class TestClientHttpException:
         exc = ClientHttpException(status_code=418, message="client")
         assert str(exc) == "client"
         assert exc.status_code == 418
-

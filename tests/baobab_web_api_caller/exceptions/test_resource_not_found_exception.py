@@ -22,4 +22,3 @@ class TestResourceNotFoundException:
         exc = ResourceNotFoundException(status_code=404, message="404")
         assert str(exc) == "404"
         assert exc.status_code == 404
-

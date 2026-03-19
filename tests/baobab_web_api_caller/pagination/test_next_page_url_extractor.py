@@ -30,8 +30,10 @@ class TestNextPageUrlExtractor:
     def test_is_abstract(self) -> None:
         """La classe abstraite ne doit pas être instanciée."""
 
+        cls = NextPageUrlExtractor
         with pytest.raises(TypeError):
-            NextPageUrlExtractor()  # pyright: ignore[reportGeneralTypeIssues]
+            # pylint: disable=abstract-class-instantiated
+            cls()  # type: ignore[abstract]  # pyright: ignore[reportGeneralTypeIssues]
 
     def test_extract_contract_returns_str_or_none(self) -> None:
         """Vérifie la valeur de retour d'extract_next_page_url."""
@@ -42,4 +44,3 @@ class TestNextPageUrlExtractor:
 
         extractor_none = FakeNextPageUrlExtractor(next_url=None)
         assert extractor_none.extract_next_page_url(response) is None
-

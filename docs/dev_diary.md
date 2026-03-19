@@ -1,5 +1,38 @@
 # Journal de développement
 
+## 2026-03-19 23:45:00
+
+### Modifications
+- Passe validation release : alignement outillage (`mypy`, `flake8`, `black`, `pylint`, `pytest`, couverture) avec ce qui est documenté pour la publication ; ajout `docs/release_validation_checklist.md` et `docs/verify_test_mirror.py`.
+- Correctifs techniques : `ErrorResponseMapper._extract_diagnostic_headers` (`Mapping[str, str]`) ; ignores/types de tests pour ABC et `PageResult` ; `RequestUrlBuilder` sans import inutilisé ; `pyproject.toml` `min-similarity-lines` pour pylint ; suppressions pylint locales (`HttpTransportCaller.call`, `BulkFileDownloader.download`, accès interne dans `test_throttler`).
+- `CHANGELOG` [Unreleased] : avertissement pré-release + entrées liées à la checklist ; `README` : renvoi vers la checklist et le script miroir.
+- Intégration Git sur `main` : commit unique conforme Conventional Commits (`chore(release): ...`).
+
+### Buts
+- Empêcher toute release ou entrée de `CHANGELOG` affichant une conformité non démontrée par les commandes du dépôt.
+- Respecter `docs/00_dev_constraints.md` : qualité complète, journal structuré, traçabilité.
+
+### Impact
+- Les commandes de la checklist atteignent un état vert sur l’arborescence actuelle ; les claims release doivent rester vérifiables via ces commandes.
+
+## 2026-03-19 23:25:07
+
+### Modifications
+- Audit croisé code / tests / README / CHANGELOG / dev_diary / `docs/01_specifications.md` sur : détection JSON (`JsonResponseDecoder`), mapping d’erreurs (`ErrorResponseMapper`), fermeture HTTP (`HttpTransportCaller`, `BulkFileDownloader`), fusion d’en-têtes (`build_call_context`), granularité miroir des tests (0 module source sans `test_<module>.py`), query params multi-valeurs (`BaobabRequest`, façade `BaobabServiceCaller`).
+- Ajustements documentaires pour supprimer toute ambiguïté : spécifications §10 enrichies (`JsonResponseDecoder`, `ErrorResponseMapper`, `BulkFileDownloader`), README (transport + téléchargement streaming + typo `CHANGELOG`), entrée `CHANGELOG` [Unreleased] pour tracer l’audit.
+
+### Impact
+- Aucun écart résiduel identifié entre implémentation et description pour les points audités ; pas de changement de code métier. Les tests existants restent la référence d’exécution.
+
+## 2026-03-19 23:35:00
+
+### Modifications
+- Élargissement des annotations `query_params` sur toutes les méthodes de convenance de `BaobabServiceCaller` pour refléter `BaobabRequest` (`str` ou `Sequence[str]` par clé) ; docstrings de façade mises à jour.
+- Tests unitaires complétés (GET simple / séquence, POST mixte, DELETE séquence, HEAD simple) et documentation (`README.md`, `docs/01_specifications.md`).
+
+### Impact
+- Pas de changement de comportement à l’exécution (seule la surface typée et la doc) ; même conversion `dict(...)` vers `BaobabRequest`.
+
 ## 2026-03-19 23:17:27
 
 ### Modifications

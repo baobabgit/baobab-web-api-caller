@@ -30,7 +30,8 @@ class TestPageExtractor:
         """La classe abstraite ne doit pas être instanciée."""
 
         with pytest.raises(TypeError):
-            PageExtractor()  # pyright: ignore[reportGeneralTypeIssues]
+            # pylint: disable=abstract-class-instantiated
+            PageExtractor()  # type: ignore[abstract]  # pyright: ignore[reportGeneralTypeIssues]
 
     def test_extract_contract_returns_items(self) -> None:
         """Vérifie le type et la valeur de retour."""
@@ -38,4 +39,3 @@ class TestPageExtractor:
         response = BaobabResponse(status_code=200, headers={}, text="ok", json_data=None)
         extractor = FakePageExtractor(items=(3, 4))
         assert extractor.extract_items(response) == (3, 4)
-

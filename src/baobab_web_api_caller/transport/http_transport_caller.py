@@ -70,6 +70,7 @@ class HttpTransportCaller(BaobabWebApiCaller):
             throttler=throttler,
         )
 
+    # pylint: disable-next=inconsistent-return-statements
     def call(self, request: BaobabRequest) -> BaobabResponse:
         """Exécute une requête HTTP synchrone via `requests`.
 

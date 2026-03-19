@@ -101,3 +101,63 @@ class TestBaobabServiceCaller:
         _ = service.options("/items")
         assert caller.last_request is not None
         assert caller.last_request.method is HttpMethod.OPTIONS
+
+    def test_get_query_params_simple_string(self) -> None:
+        """GET avec une valeur simple par clé."""
+
+        cfg = ServiceConfig(base_url="https://example.com")
+        caller = RecordingCaller()
+        service = BaobabServiceCaller(service_config=cfg, web_api_caller=caller)
+        _ = service.get("/search", query_params={"format": "json"})
+        assert caller.last_request is not None
+        assert dict(caller.last_request.query_params) == {"format": "json"}
+
+    def test_get_query_params_repeated_via_sequence(self) -> None:
+        """GET avec clé répétée via Sequence[str]."""
+
+        cfg = ServiceConfig(base_url="https://example.com")
+        caller = RecordingCaller()
+        service = BaobabServiceCaller(service_config=cfg, web_api_caller=caller)
+        _ = service.get("/items", query_params={"tag": ["a", "b"]})
+        assert caller.last_request is not None
+        frozen = caller.last_request.query_params
+        assert frozen["tag"] == ("a", "b")
+
+    def test_post_query_params_mixed_simple_and_sequence(self) -> None:
+        """POST avec mélange clé simple et séquence."""
+
+        cfg = ServiceConfig(base_url="https://example.com")
+        caller = RecordingCaller()
+        service = BaobabServiceCaller(service_config=cfg, web_api_caller=caller)
+        _ = service.post(
+            "/items",
+            query_params={"q": "x", "tag": ("u", "v")},
+            json_body={"name": "n"},
+        )
+        assert caller.last_request is not None
+        qp = caller.last_request.query_params
+        assert qp["q"] == "x"
+        assert qp["tag"] == ("u", "v")
+        assert caller.last_request.json_body == {"name": "n"}
+
+    def test_delete_query_params_sequence(self) -> None:
+        """DELETE sans body : query multi-valeurs."""
+
+        cfg = ServiceConfig(base_url="https://example.com")
+        caller = RecordingCaller()
+        service = BaobabServiceCaller(service_config=cfg, web_api_caller=caller)
+        _ = service.delete("/items/1", query_params={"reason": ["a", "b"]})
+        assert caller.last_request is not None
+        assert caller.last_request.method is HttpMethod.DELETE
+        assert caller.last_request.query_params["reason"] == ("a", "b")
+
+    def test_head_query_params_simple(self) -> None:
+        """HEAD sans body : valeur simple."""
+
+        cfg = ServiceConfig(base_url="https://example.com")
+        caller = RecordingCaller()
+        service = BaobabServiceCaller(service_config=cfg, web_api_caller=caller)
+        _ = service.head("/status", query_params={"verbose": "1"})
+        assert caller.last_request is not None
+        assert caller.last_request.method is HttpMethod.HEAD
+        assert caller.last_request.query_params["verbose"] == "1"

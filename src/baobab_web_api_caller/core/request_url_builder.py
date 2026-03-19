@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
 from urllib.parse import urlencode
 
 from baobab_web_api_caller.core.baobab_request import BaobabRequest

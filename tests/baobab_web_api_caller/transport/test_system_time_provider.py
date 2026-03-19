@@ -14,8 +14,9 @@ class TestSystemTimeProvider:
         """monotonic() doit renvoyer time.monotonic()."""
 
         provider = SystemTimeProvider()
-        with patch("baobab_web_api_caller.transport.system_time_provider.time.monotonic") as mock_mono:
+        with patch(
+            "baobab_web_api_caller.transport.system_time_provider.time.monotonic"
+        ) as mock_mono:
             mock_mono.return_value = 123.0
             assert provider.monotonic() == 123.0
             mock_mono.assert_called_once()
-
