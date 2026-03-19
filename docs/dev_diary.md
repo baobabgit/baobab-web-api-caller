@@ -1,5 +1,14 @@
 # Journal de développement
 
+## 2026-03-19 22:30:12
+
+### Modifications
+- Resynchronisation documentaire ciblée sur `HttpTransportCaller` : docstring de `call()` enrichie pour expliciter retry, throttling, mapping d’erreurs et fermeture des ressources `requests`.
+- Alignement de `README.md` et `docs/01_specifications.md` sur le comportement réel du transport synchrone.
+
+### Impact
+- Documentation cohérente avec l’implémentation actuelle, sans changement fonctionnel.
+
 ## 2026-03-19 21:02:08
 
 ### Modifications

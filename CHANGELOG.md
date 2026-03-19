@@ -20,6 +20,7 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 - Amélioration du diagnostic des exceptions HTTP : messages plus lisibles (raison standard) + extrait de body tronqué + sous-ensemble d'en-têtes (dont `WWW-Authenticate` côté 401).
 - Suppression de la fusion redondante des headers par défaut : la fusion finale est effectuée uniquement côté transport (`build_call_context` via `DefaultHeaderProvider`).
 - Conformité stricte de la granularité miroir de la suite de tests (fichiers dédiés par classe, découpage des tests agrégés d’exceptions).
+- Resynchronisation des docstrings/docs sur le transport synchrone (`HttpTransportCaller`) : retry, throttling, mapping d’erreurs et gestion des ressources explicités.
 
 ## [0.1.0] - 2026-03-17
 

@@ -71,7 +71,16 @@ class HttpTransportCaller(BaobabWebApiCaller):
         )
 
     def call(self, request: BaobabRequest) -> BaobabResponse:
-        """Exécute une requête via `requests`."""
+        """Exécute une requête HTTP synchrone via `requests`.
+
+        Comportement principal :
+        - applique le throttling avant chaque tentative ;
+        - applique la politique de retry sur erreurs réseau (`requests`) et statuts retryables
+          (`429`, `5xx`) ;
+        - mappe les erreurs HTTP finales via `ErrorResponseMapper` ;
+        - ferme systématiquement la `requests.Session` en fin d'appel ;
+        - ferme chaque `requests.Response` après normalisation/décodage.
+        """
 
         ctx = build_call_context(
             request=request,

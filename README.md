@@ -48,6 +48,13 @@ Voir `docs/examples/pagination_minimal.py`.
 
 Voir `docs/examples/bulk_file_downloader_minimal.py`.
 
+### Transport HTTP synchrone (comportement)
+Le transport synchrone (`HttpTransportCaller`) applique :
+- le throttling avant chaque tentative ;
+- le retry selon `RetryPolicy` (erreurs réseau, `429` et `5xx`) ;
+- le mapping des erreurs HTTP via `ErrorResponseMapper` ;
+- la fermeture explicite des sessions/réponses `requests` pour éviter les fuites.
+
 ### Paramètres de requête (query params)
 `BaobabRequest.query_params` supporte :
 - une valeur `str` pour une clé unique ;
