@@ -1,5 +1,26 @@
 # Journal de développement
 
+## 2026-03-19 20:17:50
+
+### Modifications
+- Amélioration de `ErrorResponseMapper` : messages d’exceptions HTTP plus lisibles via raison standard quand disponible (`HTTP {status_code} {raison}`), et inclusion de `WWW-Authenticate` parmi les headers diagnostiques (notamment pour le 401).
+- Mise à jour des tests de `ErrorResponseMapper` pour valider les messages et l’inclusion de `WWW-Authenticate`.
+
+### Impact
+- Les exceptions HTTP levées par le transport et le downloader contiennent désormais un message plus directement interprétable au premier regard, tout en conservant le filtrage de headers et l’extrait de body tronqué.
+
+## 2026-03-19 20:10:06
+
+### Modifications
+- Renforcement minimal et lisible du cycle de vie des ressources HTTP : fermeture “safe” de la `requests.Session` et de la `requests.Response` uniquement lorsque les objets sont initialisés.
+- Ajout d’un test unitaire dans le downloader validant que la réponse streaming est bien fermée en cas d’erreur d’écriture disque (`OSError`), en plus des cas déjà couverts (`requests` / erreurs HTTP).
+
+### Buts
+- Éviter toute fuite de ressources en cas d’exception non liée directement à `requests`, tout en gardant le code simple et testable.
+
+### Impact
+- Garantie renforcée de fermeture effective des ressources dans des scénarios d’erreur supplémentaires, sans changement de l’API publique ni du comportement fonctionnel.
+
 ## 2026-03-17 21:54:57
 
 ### Modifications

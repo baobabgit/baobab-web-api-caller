@@ -159,7 +159,8 @@ class HttpTransportCaller(BaobabWebApiCaller):
             raw = self._to_baobab_response(response)
             return self.response_decoder.decode(raw)
         finally:
-            response.close()
+            if response is not None:
+                response.close()
 
     @staticmethod
     def _to_baobab_response(response: requests.Response) -> BaobabResponse:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from baobab_web_api_caller.core.baobab_response import BaobabResponse
 from baobab_web_api_caller.exceptions.authentication_exception import AuthenticationException
@@ -18,12 +19,27 @@ from baobab_web_api_caller.exceptions.server_http_exception import ServerHttpExc
 class ErrorResponseMapper:
     """Transforme une réponse en exception projet lorsque nécessaire."""
 
+    _STATUS_REASONS: ClassVar[dict[int, str]] = {
+        400: "Bad Request",
+        401: "Unauthorized",
+        403: "Forbidden",
+        404: "Not Found",
+        429: "Too Many Requests",
+        500: "Internal Server Error",
+        502: "Bad Gateway",
+        503: "Service Unavailable",
+        504: "Gateway Timeout",
+    }
+
     def raise_for_error(self, response: BaobabResponse) -> None:
         """Lève une exception projet si le status code indique une erreur.
 
         Le message et les attributs de l'exception exposent un sous-ensemble des informations
         de la réponse (status, extrait de body texte, quelques en-têtes utiles) pour faciliter
         le diagnostic tout en évitant de logguer des payloads trop volumineux.
+
+        Le champ `message` est de la forme `HTTP {status_code} {raison}` lorsqu'une raison
+        standard est connue, et sinon `HTTP {status_code} Client Error` / `Server Error`.
         """
 
         status = response.status_code
@@ -32,7 +48,7 @@ class ErrorResponseMapper:
 
         body_excerpt = self._extract_body_excerpt(response.text)
         headers_subset = self._extract_diagnostic_headers(response.headers)
-        message = f"HTTP {status}"
+        message = self._build_error_message(status)
 
         if status == 401:
             raise AuthenticationException(
@@ -69,6 +85,15 @@ class ErrorResponseMapper:
             headers=headers_subset,
         )
 
+    @classmethod
+    def _build_error_message(cls, status_code: int) -> str:
+        reason = cls._STATUS_REASONS.get(status_code)
+        if reason is not None:
+            return f"HTTP {status_code} {reason}"
+        if 400 <= status_code <= 499:
+            return f"HTTP {status_code} Client Error"
+        return f"HTTP {status_code} Server Error"
+
     @staticmethod
     def _extract_body_excerpt(text: str | None, *, max_length: int = 256) -> str | None:
         if text is None:
@@ -88,6 +113,7 @@ class ErrorResponseMapper:
             "x-request-id",
             "x-correlation-id",
             "retry-after",
+            "www-authenticate",
         }
 
         subset: dict[str, str] = {}

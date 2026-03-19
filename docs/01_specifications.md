@@ -258,7 +258,8 @@ Cette classe doit :
 
 Le projet doit prévoir un composant chargé de transformer les réponses en erreur en exceptions
 métier du projet, en exposant un contexte HTTP utile au diagnostic (code, extrait de body texte,
-certaines métadonnées).
+certaines métadonnées, et un message lisible de type `HTTP {status_code} {raison}` quand la
+raison standard est connue).
 
 Ce composant doit permettre de mapper au minimum :
 - les erreurs de configuration ;
