@@ -39,9 +39,30 @@ class TestErrorResponseMapper:
 
         err = exc_info.value
         assert err.status_code == 401
-        assert "HTTP 401" in str(err)
+        assert "HTTP 401 Unauthorized" in str(err)
         assert err.body_excerpt == "unauthorized"
         assert err.headers == {"Content-Type": "text/plain", "X-Request-Id": "abc"}
+
+    def test_maps_401_includes_www_authenticate(self) -> None:
+        """401 -> conserve WWW-Authenticate si présent."""
+
+        response = BaobabResponse(
+            status_code=401,
+            headers={"WWW-Authenticate": "Bearer", "Content-Type": "text/plain"},
+            text="unauthorized",
+        )
+
+        with pytest.raises(AuthenticationException) as exc_info:
+            ErrorResponseMapper().raise_for_error(response)
+
+        err = exc_info.value
+        assert err.status_code == 401
+        assert "HTTP 401 Unauthorized" in str(err)
+        assert err.body_excerpt == "unauthorized"
+        assert err.headers == {
+            "WWW-Authenticate": "Bearer",
+            "Content-Type": "text/plain",
+        }
 
     def test_maps_404_with_context(self) -> None:
         """404 -> ResourceNotFoundException avec contexte enrichi."""
@@ -57,7 +78,7 @@ class TestErrorResponseMapper:
 
         err = exc_info.value
         assert err.status_code == 404
-        assert "HTTP 404" in str(err)
+        assert "HTTP 404 Not Found" in str(err)
         assert err.body_excerpt == '{"error": "not found"}'
 
     def test_maps_429_with_context(self) -> None:
@@ -74,7 +95,7 @@ class TestErrorResponseMapper:
 
         err = exc_info.value
         assert err.status_code == 429
-        assert "HTTP 429" in str(err)
+        assert "HTTP 429 Too Many Requests" in str(err)
         assert err.body_excerpt == "too many requests"
         assert err.headers == {"Retry-After": "10"}
 
@@ -93,7 +114,7 @@ class TestErrorResponseMapper:
 
         err = exc_info.value
         assert err.status_code == 418
-        assert "HTTP 418" in str(err)
+        assert "HTTP 418 Client Error" in str(err)
         assert err.body_excerpt is not None
         assert err.body_excerpt.startswith("x" * 256)
         assert err.body_excerpt.endswith("…")
@@ -112,7 +133,7 @@ class TestErrorResponseMapper:
 
         err = exc_info.value
         assert err.status_code == 503
-        assert "HTTP 503" in str(err)
+        assert "HTTP 503 Service Unavailable" in str(err)
         assert err.body_excerpt == "service unavailable"
 
     def test_empty_body_produces_no_excerpt(self) -> None:

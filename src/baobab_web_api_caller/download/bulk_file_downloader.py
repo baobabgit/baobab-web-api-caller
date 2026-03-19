@@ -65,6 +65,9 @@ class BulkFileDownloader:
         L'écriture est effectuée dans un fichier temporaire puis renommée, afin d'éviter les
         fichiers partiels en cas d'erreur.
 
+        La réponse streaming est fermée systématiquement en fin d'exécution (succès, erreur HTTP
+        ou exception), afin d'éviter toute fuite de ressources.
+
         :param request: Requête à exécuter (souvent GET).
         :type request: BaobabRequest
         :param output_path: Chemin cible.
@@ -154,6 +157,8 @@ class BulkFileDownloader:
                         pass
                     raise TransportException(str(exc)) from exc
             finally:
-                response.close()
+                if response is not None:
+                    response.close()
         finally:
-            ctx.session.close()
+            if ctx is not None:
+                ctx.session.close()

@@ -14,6 +14,8 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 ### Fixed
 - Fermeture explicite des `requests.Session` après chaque appel dans le transport synchrone.
 - Fermeture explicite des `requests.Response` (y compris en streaming) dans le downloader, pour éviter les fuites de ressources.
+- Fermeture “safe” des ressources `requests.Session` / `requests.Response` via vérifications d’initialisation, et tests garantissant la fermeture effective en cas d’erreur d’écriture disque.
+- Amélioration du diagnostic des exceptions HTTP : messages plus lisibles (raison standard) + extrait de body tronqué + sous-ensemble d'en-têtes (dont `WWW-Authenticate` côté 401).
 
 ## [0.1.0] - 2026-03-17
 

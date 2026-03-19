@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 import requests
@@ -178,5 +178,31 @@ class TestBulkFileDownloader:
 
         with pytest.raises(ResourceNotFoundException):
             downloader.download(req, output_path=out)
+        session.close.assert_called_once()
+        response.close.assert_called_once()
+
+    def test_download_closes_response_on_write_error(self, tmp_path: Path) -> None:
+        """Ferme la réponse streaming en cas d'échec d'écriture disque."""
+
+        response = Mock(spec=requests.Response)
+        response.status_code = 200
+        response.headers = {"Content-Type": "application/octet-stream"}
+        response.iter_content.return_value = [b"data"]
+
+        session = Mock(spec=requests.Session)
+        session.request.return_value = response
+
+        cfg = ServiceConfig(base_url="https://example.com")
+        downloader = BulkFileDownloader.from_service_config(
+            service_config=cfg, session_factory=FakeSessionFactory(session=session)
+        )
+
+        out = tmp_path / "file.bin"
+        req = BaobabRequest(method=HttpMethod.GET, path="/bin", query_params={}, headers={})
+
+        with patch("pathlib.Path.open", side_effect=OSError("disk error")):
+            with pytest.raises(TransportException):
+                downloader.download(req, output_path=out)
+
         session.close.assert_called_once()
         response.close.assert_called_once()
