@@ -1,5 +1,16 @@
 # Journal de développement
 
+## 2026-03-17 12:00:00
+
+### Modifications
+- Complétion des sections `### Buts` manquantes pour toutes les entrées du **2026-03-19** dans `docs/dev_diary.md` ; ajout du `### Impact` manquant pour **2026-03-19 20:29:43**.
+
+### Buts
+- Aligner l’intégralité du journal sur le format imposé par `docs/00_dev_constraints.md` (date / Modifications / Buts / Impact).
+
+### Impact
+- Chaque entrée récente du 19 mars est désormais traçable avec des objectifs explicites ; réduction du risque de dérive documentaire.
+
 ## 2026-03-19 23:45:00
 
 ### Modifications
