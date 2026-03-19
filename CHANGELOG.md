@@ -11,6 +11,7 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 - Enrichissement des exceptions HTTP (`HttpException` et dérivées) avec `status_code`, extrait de body texte et sous-ensemble d'en-têtes utiles.
  - Support des paramètres de query string sous forme de chaînes ou de séquences de chaînes (`Mapping[str, str | Sequence[str]]`) dans `BaobabRequest`, avec encodage correct des clés répétées dans `RequestUrlBuilder` et support côté pagination.
 - Tests supplémentaires + documentation clarifiée pour la gestion des query params multi-valués (séquences, clés répétées) et la compatibilité avec `ApiKeyQueryAuthenticationStrategy`.
+- Détection JSON élargie dans `JsonResponseDecoder` pour les content-types JSON usuels (`application/json` et `application/*+json`).
 
 ### Fixed
 - Fermeture explicite des `requests.Session` après chaque appel dans le transport synchrone.
