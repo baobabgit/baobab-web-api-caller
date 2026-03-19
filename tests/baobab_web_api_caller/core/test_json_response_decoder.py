@@ -57,6 +57,19 @@ class TestJsonResponseDecoder:
         out = JsonResponseDecoder().decode(resp)
         assert out.json_data == {"data": []}
 
+    def test_decode_accepts_application_hal_json(self) -> None:
+        """Décode une variante JSON de type HAL."""
+
+        resp = BaobabResponse(
+            status_code=200,
+            headers={"Content-Type": "application/hal+json"},
+            text='{"_links": {"self": {"href": "/"}}}',
+            content=b'{"_links": {"self": {"href": "/"}}}',
+        )
+
+        out = JsonResponseDecoder().decode(resp)
+        assert out.json_data == {"_links": {"self": {"href": "/"}}}
+
     def test_decode_ignores_when_content_type_is_missing(self) -> None:
         """Sans Content-Type, la réponse est laissée intacte."""
 
