@@ -55,6 +55,16 @@ Le transport synchrone (`HttpTransportCaller`) applique :
 - le mapping des erreurs HTTP via `ErrorResponseMapper` ;
 - la fermeture explicite des sessions/réponses `requests` pour éviter les fuites.
 
+### En-têtes HTTP (fusion)
+La fusion finale des en-têtes est centralisée dans `build_call_context` (transport), dans cet ordre de
+priorité croissante pour une même clé :
+1. en-têtes par défaut du service (`ServiceConfig.default_headers`) ;
+2. en-têtes de la `BaobabRequest` (ils écrasent les valeurs par défaut) ;
+3. stratégie d'authentification (appliquée en dernier ; peut définir ou remplacer des clés comme
+   `Authorization`).
+
+La façade `BaobabServiceCaller` délègue la requête au transport sans fusionner les défauts elle-même.
+
 ### Paramètres de requête (query params)
 `BaobabRequest.query_params` supporte :
 - une valeur `str` pour une clé unique ;

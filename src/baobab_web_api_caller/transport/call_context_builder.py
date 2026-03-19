@@ -15,7 +15,11 @@ from baobab_web_api_caller.transport.requests_session_factory import RequestsSes
 
 @dataclass(frozen=True, slots=True)
 class CallContext:
-    """Contexte prêt à exécuter une requête via `requests`."""
+    """Contexte prêt à exécuter une requête via `requests`.
+
+    ``prepared_request`` contient les en-têtes finaux (défauts, requête, authentification), cf.
+    :func:`build_call_context`.
+    """
 
     prepared_request: BaobabRequest
     url: str
@@ -33,8 +37,32 @@ def build_call_context(
 ) -> CallContext:
     """Prépare une requête et instancie une session.
 
-    Applique headers par défaut + stratégie d'authentification, résout le timeout effectif,
-    puis construit l'URL finale.
+    Point unique d'assemblage des en-têtes HTTP pour l'exécution : aucune fusion complémentaire
+    n'est attendue en amont (par exemple dans
+    :class:`~baobab_web_api_caller.service.baobab_service_caller.BaobabServiceCaller`).
+
+    Ordre d'application (du plus faible au plus fort priorité pour une même clé d'en-tête) :
+
+    #. ``default_header_provider`` — en-têtes issus de la configuration de service ;
+    #. en-têtes portés par ``request`` — ils écrasent les valeurs par défaut pour une même clé ;
+    #. ``service_config.authentication_strategy`` — appliquée en dernier (ex. ``Authorization``,
+       clé API) et peut donc remplacer une valeur fournie dans la requête pour cette clé.
+
+    Résout ensuite le timeout effectif et construit l'URL finale.
+
+    :param request: Requête telle que fournie par l'appelant (en-têtes utilisateur non fusionnés
+        avec les défauts).
+    :type request: BaobabRequest
+    :param service_config: Configuration du service distant (auth, timeout par défaut).
+    :type service_config: ServiceConfig
+    :param default_header_provider: Fournisseur des en-têtes par défaut du service.
+    :type default_header_provider: DefaultHeaderProvider
+    :param url_builder: Constructeur d'URL absolue.
+    :type url_builder: RequestUrlBuilder
+    :param session_factory: Factory de :class:`requests.Session`.
+    :type session_factory: RequestsSessionFactory
+    :return: Contexte prêt pour l'appel HTTP.
+    :rtype: CallContext
     """
 
     prepared = default_header_provider.apply(request)

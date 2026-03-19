@@ -1,5 +1,25 @@
 # Journal de développement
 
+## 2026-03-19 23:05:00
+
+### Modifications
+- Poursuite de la conformité stricte « une classe source ↔ un fichier de test miroir » : couverture de `utils/mapping_utils.py` via `tests/baobab_web_api_caller/utils/test_mapping_utils.py` (classe `TestFreezeStrMapping`).
+- Séparation des tests du dataclass `CallContext` (`test_call_context.py`, `TestCallContext`) des tests de `build_call_context` (`test_call_context_builder.py`, classe renommée `TestBuildCallContext`).
+- Mise à jour de l’arborescence cible des tests dans `docs/01_specifications.md` (présence de `utils/`).
+
+### Impact
+- Couverture globale maintenue au-dessus de 90 % ; aucun changement d’API publique ; pas de refactor métier.
+
+## 2026-03-19 22:46:31
+
+### Modifications
+- Consolidation documentaire du flux d'en-têtes : précision dans `build_call_context` (ordre défaut → requête → authentification) et rappels associés dans `DefaultHeaderProvider`, `CallContext`, `HttpTransportCaller.call` et `docs/01_specifications.md` / `README.md`.
+- Ajout de tests d'assemblage dans `test_call_context_builder` (écrasement défaut par la requête, écrasement de l'`Authorization` de la requête par la stratégie Bearer).
+- Correction dans une entrée antérieure du journal : la priorité réelle pour une même clé est bien *authentification après requête* (ex. `Authorization`), pas l'inverse.
+
+### Impact
+- Responsabilité unique de fusion inchangée côté code (`build_call_context`) ; lisibilité et garanties de priorité mieux explicites et testées.
+
 ## 2026-03-19 22:30:12
 
 ### Modifications
@@ -22,7 +42,7 @@
 
 ### Modifications
 - Simplification du flux headers : suppression de la fusion redondante des headers par défaut dans `BaobabServiceCaller`.
-- Fusion finale conservée uniquement côté transport, via `build_call_context` et `DefaultHeaderProvider` (priorité : requête > headers par défaut > authentification).
+- Fusion finale conservée uniquement côté transport, via `build_call_context` et `DefaultHeaderProvider` (priorité pour une même clé : requête > défauts ; puis authentification après la requête, ex. `Authorization`).
 
 ### Impact
 - Code plus lisible et responsabilité plus claire, sans changement de comportement fonctionnel pour l'usage standard avec les transports fournis.

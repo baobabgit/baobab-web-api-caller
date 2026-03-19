@@ -74,6 +74,7 @@ class HttpTransportCaller(BaobabWebApiCaller):
         """Exécute une requête HTTP synchrone via `requests`.
 
         Comportement principal :
+        - assemble les en-têtes (défauts, requête, authentification) via `build_call_context` ;
         - applique le throttling avant chaque tentative ;
         - applique la politique de retry sur erreurs réseau (`requests`) et statuts retryables
           (`429`, `5xx`) ;
@@ -95,7 +96,9 @@ class HttpTransportCaller(BaobabWebApiCaller):
             last_error: Exception | None = None
             for attempt in range(1, retry_policy.max_attempts + 1):
                 self.throttler.throttle()
-                result = self._try_call_once(ctx.session, ctx.prepared_request, ctx.url, ctx.timeout)
+                result = self._try_call_once(
+                    ctx.session, ctx.prepared_request, ctx.url, ctx.timeout
+                )
 
                 if isinstance(result, BaobabResponse):
                     if self._is_retryable_status_code(result.status_code):

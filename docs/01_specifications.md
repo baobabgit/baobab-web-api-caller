@@ -525,7 +525,10 @@ Définition des règles de nouvelle tentative.
 Définition des règles minimales de temporisation entre appels.
 
 #### `DefaultHeaderProvider`
-Gestion centralisée des headers par défaut.
+Fusion des en-têtes par défaut du service avec ceux de la requête (les valeurs de la requête
+l'emportent pour une même clé). L'assemblage final avec la stratégie d'authentification est
+effectué exclusivement dans `build_call_context` (transport), qui peut encore définir ou écraser
+des clés comme `Authorization`.
 
 ### 10.4 Couche `transport`
 
@@ -540,7 +543,8 @@ Factory de création de session HTTP synchrone.
 ### 10.5 Couche `service`
 
 #### `BaobabServiceCaller`
-Façade de service et point d'entrée haut niveau.
+Façade de service et point d'entrée haut niveau. Ne fusionne pas les en-têtes avec la
+configuration : cette étape est réservée au transport (`build_call_context`).
 
 ### 10.6 Couche `pagination`
 
@@ -607,7 +611,8 @@ tests/baobab_web_api_caller/
 ├── exceptions/
 ├── pagination/
 ├── service/
-└── transport/
+├── transport/
+└── utils/
 ```
 
 ## 12.2 Règles de conception des tests

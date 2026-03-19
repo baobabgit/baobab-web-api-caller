@@ -13,7 +13,10 @@ from baobab_web_api_caller.utils.mapping_utils import freeze_str_mapping
 class DefaultHeaderProvider:
     """Fournit des en-têtes HTTP à appliquer à une requête.
 
-    Les headers de la requête priment sur les headers par défaut (pas d'écrasement involontaire).
+    Les en-têtes de la requête priment sur les en-têtes par défaut pour une même clé.
+    L'application de la stratégie d'authentification du service est réalisée ensuite dans
+    :func:`~baobab_web_api_caller.transport.call_context_builder.build_call_context`, qui peut
+    à son tour définir ou écraser des clés (ex. ``Authorization``).
 
     :param default_headers: Headers par défaut (str->str).
     :type default_headers: Mapping[str, str]
