@@ -43,6 +43,20 @@ class TestApiKeyQueryAuthenticationStrategy:
         assert dict(req.query_params) == {"api_key": "existing"}
         assert dict(out.query_params) == {"api_key": ("existing", "k")}
 
+    def test_apply_appends_api_key_when_param_is_sequence(self) -> None:
+        """Ajoute l'API key en conservant une séquence existante."""
+
+        req = BaobabRequest(
+            method=HttpMethod.GET,
+            path="/v1/items",
+            query_params={"api_key": ("existing_1", "existing_2")},
+            headers={},
+        )
+        out = ApiKeyQueryAuthenticationStrategy(param_name="api_key", api_key="k").apply(req)
+
+        assert dict(req.query_params) == {"api_key": ("existing_1", "existing_2")}
+        assert dict(out.query_params) == {"api_key": ("existing_1", "existing_2", "k")}
+
     def test_param_name_must_be_non_empty(self) -> None:
         """Valide le nom du paramètre."""
 

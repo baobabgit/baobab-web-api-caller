@@ -1,5 +1,11 @@
 # Journal de développement
 
+## 2026-03-19 20:29:43
+
+### Modifications
+- Ajout de tests supplémentaires sur la gestion des `query_params` multi-valués : compatibilité de `ApiKeyQueryAuthenticationStrategy` quand le paramètre existe déjà comme séquence, et pagination préservant simultanément plusieurs clés dupliquées.
+- Clarification documentaire (README + spécifications) sur le support `str` vs `Sequence[str]` pour représenter des clés répétées dans la query string.
+
 ## 2026-03-19 20:17:50
 
 ### Modifications
