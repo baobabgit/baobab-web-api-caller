@@ -26,8 +26,8 @@ class RecordingCaller(BaobabWebApiCaller):
 class TestBaobabServiceCaller:
     """Tests unitaires pour `BaobabServiceCaller`."""
 
-    def test_call_builds_request_and_merges_headers(self) -> None:
-        """Fusionne headers par défaut + headers appel (appel prime)."""
+    def test_call_delegates_request_without_merging_default_headers(self) -> None:
+        """Ne fusionne pas les headers par défaut : le transport en est responsable."""
 
         cfg = ServiceConfig(
             base_url="https://example.com",
@@ -49,11 +49,7 @@ class TestBaobabServiceCaller:
         assert caller.last_request.method is HttpMethod.GET
         assert caller.last_request.path == "/v1/items"
         assert dict(caller.last_request.query_params) == {"q": "x"}
-        assert dict(caller.last_request.headers) == {
-            "Accept": "application/json",
-            "X": "2",
-            "X-Req": "1",
-        }
+        assert dict(caller.last_request.headers) == {"X": "2", "X-Req": "1"}
         assert caller.last_request.timeout_seconds == 0.5
 
     def test_convenience_methods_delegate_to_call(self) -> None:

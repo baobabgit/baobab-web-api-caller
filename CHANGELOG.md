@@ -11,12 +11,15 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 - Enrichissement des exceptions HTTP (`HttpException` et dérivées) avec `status_code`, extrait de body texte et sous-ensemble d'en-têtes utiles.
  - Support des paramètres de query string sous forme de chaînes ou de séquences de chaînes (`Mapping[str, str | Sequence[str]]`) dans `BaobabRequest`, avec encodage correct des clés répétées dans `RequestUrlBuilder` et support côté pagination.
 - Tests supplémentaires + documentation clarifiée pour la gestion des query params multi-valués (séquences, clés répétées) et la compatibilité avec `ApiKeyQueryAuthenticationStrategy`.
+- Détection JSON élargie dans `JsonResponseDecoder` pour les content-types JSON usuels (`application/json` et `application/*+json`).
 
 ### Fixed
 - Fermeture explicite des `requests.Session` après chaque appel dans le transport synchrone.
 - Fermeture explicite des `requests.Response` (y compris en streaming) dans le downloader, pour éviter les fuites de ressources.
 - Fermeture “safe” des ressources `requests.Session` / `requests.Response` via vérifications d’initialisation, et tests garantissant la fermeture effective en cas d’erreur d’écriture disque.
 - Amélioration du diagnostic des exceptions HTTP : messages plus lisibles (raison standard) + extrait de body tronqué + sous-ensemble d'en-têtes (dont `WWW-Authenticate` côté 401).
+- Suppression de la fusion redondante des headers par défaut : la fusion finale est effectuée uniquement côté transport (`build_call_context` via `DefaultHeaderProvider`).
+- Conformité stricte de la granularité miroir de la suite de tests (fichiers dédiés par classe, découpage des tests agrégés d’exceptions).
 
 ## [0.1.0] - 2026-03-17
 

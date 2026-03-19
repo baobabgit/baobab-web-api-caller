@@ -1,5 +1,32 @@
 # Journal de développement
 
+## 2026-03-19 21:02:08
+
+### Modifications
+- Évolution de `JsonResponseDecoder` pour reconnaître les content-types JSON usuels : `application/json` et variantes `application/*+json` (ex: `application/problem+json`, `application/vnd.api+json`), y compris avec paramètres (`charset`).
+- Ajout des tests unitaires associés (content-type absent, variantes JSON, body vide, JSON invalide).
+
+### Impact
+- Meilleure compatibilité avec les APIs REST réelles qui renvoient des media types JSON standards non limités à `application/json`, sans ajout de dépendance ni changement d’API publique.
+
+## 2026-03-19 20:48:25
+
+### Modifications
+- Simplification du flux headers : suppression de la fusion redondante des headers par défaut dans `BaobabServiceCaller`.
+- Fusion finale conservée uniquement côté transport, via `build_call_context` et `DefaultHeaderProvider` (priorité : requête > headers par défaut > authentification).
+
+### Impact
+- Code plus lisible et responsabilité plus claire, sans changement de comportement fonctionnel pour l'usage standard avec les transports fournis.
+
+## 2026-03-19 20:44:07
+
+### Modifications
+- Remise en conformité stricte de la granularité miroir des tests : création des fichiers de test dédiés manquants pour `auth`, `core`, `exceptions`, `pagination` et `transport`.
+- Découpage du test agrégé `test_http_exceptions.py` en fichiers dédiés par classe (`HttpException`, `ClientHttpException`, `ServerHttpException`, `ResourceNotFoundException`, `RateLimitException`).
+
+### Impact
+- Couverture maintenue au-dessus de 90 % et suite de tests validée par `pytest -q`.
+
 ## 2026-03-19 20:29:43
 
 ### Modifications

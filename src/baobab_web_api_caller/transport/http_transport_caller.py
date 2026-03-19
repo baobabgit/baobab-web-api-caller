@@ -32,8 +32,11 @@ class HttpTransportCaller(BaobabWebApiCaller):
     """Implémentation concrète du transport HTTP synchrone.
 
     L'authentification est appliquée via la stratégie configurée, par composition.
-    Cette classe n'implémente pas le mapping d'erreurs avancé (HTTP métier), uniquement une
-    normalisation de la réponse et l'encapsulation des erreurs réseau en exceptions du projet.
+    Le mapping des erreurs HTTP (4xx/5xx) est délégué à `ErrorResponseMapper`, afin d'exposer un
+    contexte utile (code, extrait de body et certains headers) via la hiérarchie d'exceptions
+    du projet.
+    Cette classe se concentre ensuite sur la normalisation de la réponse (`BaobabResponse`) et
+    l'encapsulation des erreurs réseau (timeouts / erreurs requests) via exceptions du projet.
     """
 
     service_config: ServiceConfig
