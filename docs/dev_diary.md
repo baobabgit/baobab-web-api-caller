@@ -21,6 +21,10 @@
 - Audit croisé code / tests / README / CHANGELOG / dev_diary / `docs/01_specifications.md` sur : détection JSON (`JsonResponseDecoder`), mapping d’erreurs (`ErrorResponseMapper`), fermeture HTTP (`HttpTransportCaller`, `BulkFileDownloader`), fusion d’en-têtes (`build_call_context`), granularité miroir des tests (0 module source sans `test_<module>.py`), query params multi-valeurs (`BaobabRequest`, façade `BaobabServiceCaller`).
 - Ajustements documentaires pour supprimer toute ambiguïté : spécifications §10 enrichies (`JsonResponseDecoder`, `ErrorResponseMapper`, `BulkFileDownloader`), README (transport + téléchargement streaming + typo `CHANGELOG`), entrée `CHANGELOG` [Unreleased] pour tracer l’audit.
 
+### Buts
+- Vérifier que la description (specs, README, journal, CHANGELOG) correspond au code et aux tests pour les zones sensibles (JSON, erreurs, transport, streaming, en-têtes, query params).
+- Éliminer toute ambiguïté documentaire sans modifier le comportement runtime.
+
 ### Impact
 - Aucun écart résiduel identifié entre implémentation et description pour les points audités ; pas de changement de code métier. Les tests existants restent la référence d’exécution.
 
@@ -30,6 +34,10 @@
 - Élargissement des annotations `query_params` sur toutes les méthodes de convenance de `BaobabServiceCaller` pour refléter `BaobabRequest` (`str` ou `Sequence[str]` par clé) ; docstrings de façade mises à jour.
 - Tests unitaires complétés (GET simple / séquence, POST mixte, DELETE séquence, HEAD simple) et documentation (`README.md`, `docs/01_specifications.md`).
 
+### Buts
+- Aligner la façade `BaobabServiceCaller` sur le typage des `query_params` de `BaobabRequest` pour mypy et l’autocomplétion.
+- Garantir par des tests les variantes simple / multi-valeurs sur les méthodes de convenance.
+
 ### Impact
 - Pas de changement de comportement à l’exécution (seule la surface typée et la doc) ; même conversion `dict(...)` vers `BaobabRequest`.
 
@@ -38,6 +46,10 @@
 ### Modifications
 - Audit automatisé sur l’arborescence : chaque module `src/baobab_web_api_caller/**/*.py` (hors `__init__.py`) possède bien un `tests/baobab_web_api_caller/**/test_<module>.py` correspondant (0 écart détecté dans le dépôt courant). Les fichiers cités comme manquants dans d’anciens constats (`test_authentication_strategy.py`, `test_response_decoder.py`, pagination, transport, exceptions découpées) sont déjà présents ; `test_http_exceptions.py` est absent.
 - Ajustement du `CHANGELOG.md`, du `README.md` et de `docs/01_specifications.md` (§12.2) : formulation factuelle sur la granularité miroir, exceptions (`CallContext` / `build_call_context`, `mapping_utils`), absence de fichier d’exceptions agrégé, et note sur cache pytest / affichage partiel dans l’UI Git.
+
+### Buts
+- Cadrer la documentation sur l’arborescence réelle des tests (miroir, exceptions, particuliarités).
+- Éviter toute affirmation de couverture ou de structure non vérifiable dans le dépôt.
 
 ### Impact
 - La documentation ne surdéclare plus un état à « prouver » : elle décrit la convention, les cas particuliers et renvoie à l’arborescence réelle. Aucun changement de code métier ni d’API publique.
@@ -49,6 +61,10 @@
 - Séparation des tests du dataclass `CallContext` (`test_call_context.py`, `TestCallContext`) des tests de `build_call_context` (`test_call_context_builder.py`, classe renommée `TestBuildCallContext`).
 - Mise à jour de l’arborescence cible des tests dans `docs/01_specifications.md` (présence de `utils/`).
 
+### Buts
+- Respecter la contrainte « une classe source ↔ un fichier de test miroir » pour `mapping_utils` et les tests `CallContext`.
+- Séparer clairement les tests du dataclass et ceux du builder pour la lisibilité et la maintenance.
+
 ### Impact
 - Couverture globale maintenue au-dessus de 90 % ; aucun changement d’API publique ; pas de refactor métier.
 
@@ -59,6 +75,10 @@
 - Ajout de tests d'assemblage dans `test_call_context_builder` (écrasement défaut par la requête, écrasement de l'`Authorization` de la requête par la stratégie Bearer).
 - Correction dans une entrée antérieure du journal : la priorité réelle pour une même clé est bien *authentification après requête* (ex. `Authorization`), pas l'inverse.
 
+### Buts
+- Documenter sans ambiguïté l’ordre de fusion des en-têtes (défaut → requête → authentification).
+- Verrouiller ce comportement par des tests d’assemblage (dont `Authorization`).
+
 ### Impact
 - Responsabilité unique de fusion inchangée côté code (`build_call_context`) ; lisibilité et garanties de priorité mieux explicites et testées.
 
@@ -67,6 +87,9 @@
 ### Modifications
 - Resynchronisation documentaire ciblée sur `HttpTransportCaller` : docstring de `call()` enrichie pour expliciter retry, throttling, mapping d’erreurs et fermeture des ressources `requests`.
 - Alignement de `README.md` et `docs/01_specifications.md` sur le comportement réel du transport synchrone.
+
+### Buts
+- Décrire fidèlement le transport synchrone : retry, throttling, mapping d’erreurs, fermeture des ressources `requests`.
 
 ### Impact
 - Documentation cohérente avec l’implémentation actuelle, sans changement fonctionnel.
@@ -77,6 +100,10 @@
 - Évolution de `JsonResponseDecoder` pour reconnaître les content-types JSON usuels : `application/json` et variantes `application/*+json` (ex: `application/problem+json`, `application/vnd.api+json`), y compris avec paramètres (`charset`).
 - Ajout des tests unitaires associés (content-type absent, variantes JSON, body vide, JSON invalide).
 
+### Buts
+- Reconnaitre les `Content-Type` JSON courants en production (`application/json`, variantes `+json`, paramètres).
+- Couvrir par des tests les cas limites (absent, invalide, body vide).
+
 ### Impact
 - Meilleure compatibilité avec les APIs REST réelles qui renvoient des media types JSON standards non limités à `application/json`, sans ajout de dépendance ni changement d’API publique.
 
@@ -85,6 +112,10 @@
 ### Modifications
 - Simplification du flux headers : suppression de la fusion redondante des headers par défaut dans `BaobabServiceCaller`.
 - Fusion finale conservée uniquement côté transport, via `build_call_context` et `DefaultHeaderProvider` (priorité pour une même clé : requête > défauts ; puis authentification après la requête, ex. `Authorization`).
+
+### Buts
+- Supprimer la double fusion des en-têtes par défaut au niveau service lorsque le transport assure déjà l’assemblage.
+- Clarifier le point unique de vérité pour la priorité des en-têtes.
 
 ### Impact
 - Code plus lisible et responsabilité plus claire, sans changement de comportement fonctionnel pour l'usage standard avec les transports fournis.
@@ -95,6 +126,10 @@
 - Remise en conformité stricte de la granularité miroir des tests : création des fichiers de test dédiés manquants pour `auth`, `core`, `exceptions`, `pagination` et `transport`.
 - Découpage du test agrégé `test_http_exceptions.py` en fichiers dédiés par classe (`HttpException`, `ClientHttpException`, `ServerHttpException`, `ResourceNotFoundException`, `RateLimitException`).
 
+### Buts
+- Rétablir la granularité miroir stricte : un fichier `test_<module>.py` par module source.
+- Faciliter la navigation et l’évolution des tests d’exceptions.
+
 ### Impact
 - Couverture maintenue au-dessus de 90 % et suite de tests validée par `pytest -q`.
 
@@ -104,11 +139,22 @@
 - Ajout de tests supplémentaires sur la gestion des `query_params` multi-valués : compatibilité de `ApiKeyQueryAuthenticationStrategy` quand le paramètre existe déjà comme séquence, et pagination préservant simultanément plusieurs clés dupliquées.
 - Clarification documentaire (README + spécifications) sur le support `str` vs `Sequence[str]` pour représenter des clés répétées dans la query string.
 
+### Buts
+- Renforcer la couverture des scénarios query string multi-valeurs (auth par query, pagination).
+- Expliciter dans la documentation le modèle `str` vs `Sequence[str]` pour les consommateurs.
+
+### Impact
+- Garanties accrues sur des cas réels sans changement de contrat ; documentation alignée sur les tests.
+
 ## 2026-03-19 20:17:50
 
 ### Modifications
 - Amélioration de `ErrorResponseMapper` : messages d’exceptions HTTP plus lisibles via raison standard quand disponible (`HTTP {status_code} {raison}`), et inclusion de `WWW-Authenticate` parmi les headers diagnostiques (notamment pour le 401).
 - Mise à jour des tests de `ErrorResponseMapper` pour valider les messages et l’inclusion de `WWW-Authenticate`.
+
+### Buts
+- Améliorer la lisibilité des messages d’erreur HTTP (raison standard HTTP quand disponible).
+- Enrichir le diagnostic 401 avec `WWW-Authenticate` dans les métadonnées exposées.
 
 ### Impact
 - Les exceptions HTTP levées par le transport et le downloader contiennent désormais un message plus directement interprétable au premier regard, tout en conservant le filtrage de headers et l’extrait de body tronqué.
