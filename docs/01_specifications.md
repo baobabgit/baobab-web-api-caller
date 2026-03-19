@@ -531,6 +531,8 @@ Gestion centralisée des headers par défaut.
 
 #### `HttpTransportCaller`
 Implémentation concrète du contrat d'appel HTTP.
+Le composant applique le throttling, le retry configuré, le mapping des erreurs HTTP via
+`ErrorResponseMapper` et la fermeture explicite des ressources `requests` (session/réponse).
 
 #### `RequestsSessionFactory`
 Factory de création de session HTTP synchrone.
