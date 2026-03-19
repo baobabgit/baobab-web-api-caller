@@ -16,6 +16,7 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Changed
 - Granularité miroir des tests : ajout de `tests/.../utils/test_mapping_utils.py`, de `tests/.../transport/test_call_context.py` pour `CallContext`, et renommage de la classe de tests `TestCallContextBuilder` en `TestBuildCallContext` dans `test_call_context_builder.py` ; arborescence `utils/` documentée dans les spécifications.
+- Documentation (README, spécifications) : rappel explicite de la convention de nommage `test_<module>.py` et des exceptions (`CallContext` / `build_call_context`, `mapping_utils`) pour que l’arborescence visible corresponde aux engagements du projet.
 
 ### Fixed
 - Fermeture explicite des `requests.Session` après chaque appel dans le transport synchrone.
@@ -23,7 +24,7 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 - Fermeture “safe” des ressources `requests.Session` / `requests.Response` via vérifications d’initialisation, et tests garantissant la fermeture effective en cas d’erreur d’écriture disque.
 - Amélioration du diagnostic des exceptions HTTP : messages plus lisibles (raison standard) + extrait de body tronqué + sous-ensemble d'en-têtes (dont `WWW-Authenticate` côté 401).
 - Suppression de la fusion redondante des headers par défaut : la fusion finale est effectuée uniquement côté transport (`build_call_context` via `DefaultHeaderProvider`).
-- Conformité stricte de la granularité miroir de la suite de tests (fichiers dédiés par classe, découpage des tests agrégés d’exceptions).
+- Suite de tests découpée par classe (exceptions HTTP : plus de fichier agrégé `test_http_exceptions.py` dans le dépôt ; un fichier `test_<exception>.py` par classe). Vérification : chaque module source `*.py` (hors `__init__.py`) possède son `tests/.../test_*.py` miroir ; les nomenclatures exactes sont détaillées dans le README.
 - Resynchronisation des docstrings/docs sur le transport synchrone (`HttpTransportCaller`) : retry, throttling, mapping d’erreurs et gestion des ressources explicités.
 
 ## [0.1.0] - 2026-03-17

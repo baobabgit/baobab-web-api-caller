@@ -74,6 +74,35 @@ Lors de la construction de l'URL, les valeurs séquentielles sont encodées comm
 
 La pagination préserve également ces paramètres dupliqués quand ils sont présents dans l'URL de page suivante.
 
+### Tests (granularité miroir)
+
+Règle générale : pour chaque `src/baobab_web_api_caller/**/<nom>.py` (hors `__init__.py`), le fichier de
+tests correspondant est `tests/baobab_web_api_caller/**/test_<nom>.py`, avec une classe `Test<…>` dédiée.
+
+**Cas particuliers documentés** :
+
+- `transport/call_context_builder.py` : le dataclass `CallContext` est couvert par
+  `tests/.../transport/test_call_context.py` ; la fonction `build_call_context` par
+  `tests/.../transport/test_call_context_builder.py` (classe `TestBuildCallContext`).
+- `utils/mapping_utils.py` : pas de classe source ; le miroir est `tests/.../utils/test_mapping_utils.py`
+  (classe `TestFreezeStrMapping` pour `freeze_str_mapping`).
+
+**Exemples de fichiers déjà présents** (non exhaustif) :
+
+- `auth/authentication_strategy.py` → `tests/.../auth/test_authentication_strategy.py`
+- `core/response_decoder.py` → `tests/.../core/test_response_decoder.py`
+- `pagination/page_extractor.py`, `next_page_url_extractor.py`, `page_result.py`, `paginator.py` → un
+  `test_*.py` par module dans `tests/.../pagination/`
+- `transport/http_transport_caller.py`, `requests_session_factory.py`, `call_context_builder.py`,
+  `sleeper.py`, `system_sleeper.py`, `system_time_provider.py`, `throttler.py`, `time_provider.py` → un
+  `test_*.py` par module dans `tests/.../transport/`
+- Exceptions HTTP : pas de `test_http_exceptions.py` agrégé ; un fichier par classe sous
+  `tests/.../exceptions/` (ex. `test_http_exception.py`, `test_client_http_exception.py`, …).
+
+Si l’UI Git n’affiche pas tout le dossier `tests/`, développer l’arborescence ou cloner à jour : les fichiers
+ci-dessus font partie du dépôt courant. Un cache pytest local obsolète peut encore mentionner d’anciens chemins
+de tests : exécuter `pytest` après suppression de `.pytest_cache` si besoin.
+
 ## Validation locale (qualité)
 
 ```bash

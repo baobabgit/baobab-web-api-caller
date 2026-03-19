@@ -618,11 +618,17 @@ tests/baobab_web_api_caller/
 ## 12.2 Règles de conception des tests
 
 Les tests doivent respecter les règles suivantes :
-- un fichier de test par classe ;
-- une classe `Test<NomClasse>` par fichier ;
-- des tests unitaires isolés et déterministes ;
-- usage de doubles, mocks ou fakes si nécessaire ;
-- une couverture minimale de 90%.
+- un fichier de test miroir `test_<nom_du_module>.py` pour chaque module `nom_du_module.py` sous
+  `src/baobab_web_api_caller` (hors `__init__.py`) ; dans ce projet, chaque module source contient en
+  pratique une seule classe publique, ce qui revient à « un fichier de test par classe » ;
+- exceptions documentées : `call_context_builder.py` → `test_call_context_builder.py` pour
+  `build_call_context` et `test_call_context.py` pour `CallContext` ; `mapping_utils.py` (fonctions) →
+  `test_mapping_utils.py` ;
+- une classe de tests dédiée par fichier (ex. `TestAuthenticationStrategy`) ;
+- pour chaque classe abstraite, une implémentation concrète minimale dans le même fichier de test ;
+- des tests unitaires isolés/déterministes ; une couverture minimale de 90 % ;
+- pas de fichier agrégé unique pour plusieurs classes d’exceptions (ex. pas de `test_http_exceptions.py`) :
+  un fichier par classe d’exception.
 
 ## 12.3 Tests minimaux à prévoir
 

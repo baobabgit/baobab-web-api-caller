@@ -1,5 +1,14 @@
 # Journal de développement
 
+## 2026-03-19 23:17:27
+
+### Modifications
+- Audit automatisé sur l’arborescence : chaque module `src/baobab_web_api_caller/**/*.py` (hors `__init__.py`) possède bien un `tests/baobab_web_api_caller/**/test_<module>.py` correspondant (0 écart détecté dans le dépôt courant). Les fichiers cités comme manquants dans d’anciens constats (`test_authentication_strategy.py`, `test_response_decoder.py`, pagination, transport, exceptions découpées) sont déjà présents ; `test_http_exceptions.py` est absent.
+- Ajustement du `CHANGELOG.md`, du `README.md` et de `docs/01_specifications.md` (§12.2) : formulation factuelle sur la granularité miroir, exceptions (`CallContext` / `build_call_context`, `mapping_utils`), absence de fichier d’exceptions agrégé, et note sur cache pytest / affichage partiel dans l’UI Git.
+
+### Impact
+- La documentation ne surdéclare plus un état à « prouver » : elle décrit la convention, les cas particuliers et renvoie à l’arborescence réelle. Aucun changement de code métier ni d’API publique.
+
 ## 2026-03-19 23:05:00
 
 ### Modifications
