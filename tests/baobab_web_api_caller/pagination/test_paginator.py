@@ -141,6 +141,48 @@ class TestPaginator:
             "https://example.com/items?page=2&tag=a&tag=b",
         ]
 
+    def test_pagination_preserves_repeated_query_params_for_multiple_keys(self) -> None:
+        """Plusieurs clés dupliquées simultanément sont préservées."""
+
+        responses = {
+            "https://example.com/items?page=1&tag=a&tag=b&cat=c&cat=d": BaobabResponse(
+                status_code=200,
+                headers={"Content-Type": "application/json"},
+                json_data={
+                    "items": [1],
+                    "next": "/items?page=2&tag=a&tag=b&cat=c&cat=d",
+                },
+            ),
+            "https://example.com/items?page=2&tag=a&tag=b&cat=c&cat=d": BaobabResponse(
+                status_code=200,
+                headers={"Content-Type": "application/json"},
+                json_data={"items": [2], "next": None},
+            ),
+        }
+        low = MapCaller(responses_by_url=responses, last_urls=[])
+        service = BaobabServiceCaller(
+            service_config=ServiceConfig(base_url="https://example.com"), web_api_caller=low
+        )
+        paginator = Paginator(
+            service_caller=service,
+            page_extractor=FakePageExtractor(),
+            next_page_url_extractor=FakeNextPageUrlExtractor(),
+        )
+
+        initial = BaobabRequest(
+            method=HttpMethod.GET,
+            path="/items",
+            query_params={"page": "1", "tag": ["a", "b"], "cat": ["c", "d"]},
+            headers={},
+        )
+
+        items = list(paginator.items(initial))
+        assert items == [1, 2]
+        assert low.last_urls == [
+            "https://example.com/items?page=1&tag=a&tag=b&cat=c&cat=d",
+            "https://example.com/items?page=2&tag=a&tag=b&cat=c&cat=d",
+        ]
+
     def test_next_page_absolute_url_must_match_service_host(self) -> None:
         """URL suivante absolue vers un autre host -> ConfigurationException."""
 

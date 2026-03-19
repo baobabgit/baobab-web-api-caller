@@ -189,6 +189,10 @@ Cet objet doit pouvoir contenir au minimum :
 - un corps de formulaire éventuel ;
 - un timeout éventuel.
 
+Le champ `BaobabRequest.query_params` supporte :
+- une valeur `str` pour une clé unique ;
+- une `Sequence[str]` pour représenter des clés répétées dans la query string.
+
 ### 6.3 Objet de réponse
 
 Le projet doit définir un objet `BaobabResponse` normalisant les données de réponse.

@@ -48,6 +48,15 @@ Voir `docs/examples/pagination_minimal.py`.
 
 Voir `docs/examples/bulk_file_downloader_minimal.py`.
 
+### Paramètres de requête (query params)
+`BaobabRequest.query_params` supporte :
+- une valeur `str` pour une clé unique ;
+- une `Sequence[str]` pour des clés répétées (ex: `{"tag": ["a", "b"]}`).
+
+Lors de la construction de l'URL, les valeurs séquentielles sont encodées comme des clés répétées (même clé, plusieurs occurrences).
+
+La pagination préserve également ces paramètres dupliqués quand ils sont présents dans l'URL de page suivante.
+
 ## Validation locale (qualité)
 
 ```bash
