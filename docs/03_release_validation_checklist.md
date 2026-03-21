@@ -3,7 +3,7 @@
 Utiliser cette liste **immédiatement avant** de publier une version (tag Git, GitHub Release, PyPI)
 ou de figer une entrée majeure dans `CHANGELOG.md`.
 
-Pour une **1.0.0** ou release majeure de stabilité d’API, compléter aussi `docs/checklist_go_1_0_0.md`
+Pour une **1.0.0** ou release majeure de stabilité d’API, compléter aussi `docs/v1.0.0/01_checklist_go.md`
 (contrat public, checklist GO).
 
 ## Préalables
@@ -25,7 +25,7 @@ Exécuter dans l’ordre ; tout échec est **bloquant** sauf décision document�
 | Typage | `python -m mypy .` | `Success: no issues found` |
 | Sécurité basique | `python -m bandit -r src` | pas de finding bloquant |
 | Tests + couverture | `python -m pytest` | tous verts ; couverture ≥ seuil du `pyproject.toml` (`fail_under`) |
-| Miroir tests | `python docs/verify_test_mirror.py` | `gaps 0` ; code de sortie `0` |
+| Miroir tests | `python docs/04_verify_test_mirror.py` | `gaps 0` ; code de sortie `0` |
 | Build (optionnel mais recommandé avant PyPI) | `python -m build` | wheel + sdist sans erreur |
 | Fichier **LICENSE** | fichier `LICENSE` (ex. MIT) présent à la racine ; cohérent avec `license` dans `pyproject.toml` | présent |
 | Installation wheel (recommandé) | créer un venv propre, `pip install dist/*.whl`, `python -c "import baobab_web_api_caller"` | import OK, `__version__` attendue |
@@ -37,7 +37,7 @@ versionnés.
 ## Décision Beta / RC / 1.0.0 stable
 
 Après une passe verte des contrôles ci-dessus (y compris intégration externe si publication prévue),
-consulter **`docs/release_beta_rc_recommendation.md`** pour le choix entre pré-release (`1.0.0rc1`,
+consulter **`docs/v1.0.0/03_release_beta_rc_recommendation.md`** pour le choix entre pré-release (`1.0.0rc1`,
 etc.) et **`1.0.0` direct**.
 
 ## Dernier contrôle d’intégration avant publication (opt-in)
@@ -64,7 +64,7 @@ d’environnement, les cas sont **ignorés** (`skip`), pas échoués.
   `build_call_context`, `mapping_utils`). Vérification rapide :
 
 ```bash
-python docs/verify_test_mirror.py
+python docs/04_verify_test_mirror.py
 ```
 
   Attendu : `gaps 0` et code de sortie `0`. En cas d’écart sur des exceptions documentées

@@ -48,7 +48,7 @@ def pytest_runtest_setup(item: pytest.Item) -> None:
     if os.environ.get(_ENV_ENABLE, "").strip() != "1":
         pytest.skip(
             f"Tests d'intégration externes désactivés : définir {_ENV_ENABLE}=1 "
-            "(voir README / docs/release_validation_checklist.md)."
+            "(voir README / docs/03_release_validation_checklist.md)."
         )
 
     if not _ReachabilityCache.checked:

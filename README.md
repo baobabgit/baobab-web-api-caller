@@ -44,7 +44,7 @@ python -m pip install -e ".[dev]"
 ```
 
 **Contrat public stable** : les symboles garantis en **1.x** sont listés dans `baobab_web_api_caller.__all__`
-et décrits dans le dépôt : [`docs/public_api_1_0_0.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/public_api_1_0_0.md).
+et décrits dans le dépôt : [`docs/v1.0.0/00_public_api.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/v1.0.0/00_public_api.md).
 
 ---
 
@@ -208,7 +208,7 @@ pytest tests/baobab_web_api_caller/integration_external -m integration_external 
 Scénario **delay / timeout** supplémentaire (optionnel, plus sensible au réseau) :
 `BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1`.
 
-Détails : [`docs/release_validation_checklist.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/release_validation_checklist.md).
+Détails : [`docs/03_release_validation_checklist.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/03_release_validation_checklist.md).
 
 ---
 
@@ -236,7 +236,7 @@ python -m bandit -r src
 python -m pytest
 ```
 
-Avant publication : [`docs/release_validation_checklist.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/release_validation_checklist.md),
+Avant publication : [`docs/03_release_validation_checklist.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/03_release_validation_checklist.md),
 [`CHANGELOG.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/CHANGELOG.md).
 
 ---
@@ -245,9 +245,9 @@ Avant publication : [`docs/release_validation_checklist.md`](https://github.com/
 
 - Convention de tests : un fichier `test_<module>.py` par module source sous `src/baobab_web_api_caller/`
   (exceptions documentées : `CallContext` / `build_call_context`, `mapping_utils`). Vérification :
-  `python docs/verify_test_mirror.py` (attendu : `gaps 0`).
+  `python docs/04_verify_test_mirror.py` (attendu : `gaps 0`).
 - Cahier des charges : `docs/01_specifications.md`.
-- Journal : `docs/dev_diary.md`.
+- Journal : `docs/02_dev_diary.md`.
 
 ---
 

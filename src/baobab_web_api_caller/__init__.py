@@ -12,7 +12,7 @@ Les sous-modules internes (``transport``, ``core``, etc.) restent accessibles po
 avancés, mais seuls les symboles exportés ici sont considérés comme **stables** pour le support
 de compatibilité.
 
-Voir aussi : ``docs/public_api_1_0_0.md``.
+Voir aussi : ``docs/v1.0.0/00_public_api.md``.
 """
 
 from __future__ import annotations
