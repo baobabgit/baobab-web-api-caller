@@ -5,21 +5,35 @@ build-backend = "hatchling.build"
 [project]
 name = "baobab-web-api-caller"
 version = "1.0.0"
-description = "Librairie Python orientée objet pour simplifier et fiabiliser les appels HTTP(S) vers des API REST."
+description = "Client HTTP(S) REST synchrone typé : façade, auth, retry, pagination et téléchargement streaming."
 readme = "README.md"
 requires-python = ">=3.11,<4.0"
-license = { text = "MIT" }
+# Texte court PyPI (~une ligne) ; la description longue est le README (Markdown).
+license = { file = "LICENSE" }
 authors = [{ name = "ANDRIANAIVO Michel Patrick", email = "patrick.andri@gmail.com" }]
-keywords = ["http", "rest", "api", "client", "requests"]
+keywords = [
+  "api",
+  "client",
+  "http",
+  "https",
+  "pagination",
+  "requests",
+  "rest",
+  "retry",
+  "typing",
+]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Libraries :: Python Modules",
   "Typing :: Typed",
 ]
 dependencies = [
