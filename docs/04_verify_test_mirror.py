@@ -2,7 +2,7 @@
 
 Usage (depuis la racine du dépôt)::
 
-    python docs/verify_test_mirror.py
+    python docs/04_verify_test_mirror.py
 
 Sortie : affiche le nombre d'écarts ; code de sortie 0 si aucun, 1 sinon.
 

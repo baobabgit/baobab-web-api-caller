@@ -1,10 +1,25 @@
 # Journal de développement
 
+## 2026-03-17 12:00:00
+
+### Modifications
+- Réorganisation de **`docs/`** : artefacts **1.0.0** regroupés sous **`docs/v1.0.0/`** ; journal renommé
+  **`docs/02_dev_diary.md`** ; checklist release **`docs/03_release_validation_checklist.md`** ; script
+  miroir **`docs/04_verify_test_mirror.py`** ; mises à jour des références (README, CHANGELOG, specs,
+  exemples, `__init__.py`, tests d’intégration).
+
+### Buts
+- Clarifier la séparation entre documentation transverse numérotée et livrables par version.
+
+### Impact
+- Les liens externes vers d’anciens chemins (`public_api_1_0_0.md`, etc.) doivent être mis à jour vers
+  `docs/v1.0.0/…` ou les fichiers `02_`–`04_`.
+
 ## 2026-03-21 24:00:00
 
 ### Modifications
-- **`docs/checklist_go_1_0_0.md`** : cases cochées pour l’état réel du dépôt (qualité, intégration externe,
-  packaging **LICENSE** / build / `release_notes_1_0_0.md`) ; sections **8. Références** et historique ;
+- **`docs/v1.0.0/01_checklist_go.md`** : cases cochées pour l’état réel du dépôt (qualité, intégration externe,
+  packaging **LICENSE** / build / `docs/v1.0.0/02_release_notes.md`) ; sections **8. Références** et historique ;
   actions manuelles résiduelles (tag `v1.0.0`, upload PyPI) laissées ouvertes.
 - Suppression des fichiers **`docs/PR_BODY_*.md`** (corps de PR ponctuels, redondants une fois les merges
   effectués).
@@ -21,7 +36,7 @@
 - **Packaging PyPI 1.0.0** : fichier **`LICENSE`** (MIT) ; `pyproject.toml` — `license = { file = "LICENSE" }`,
   description courte, keywords et classifiers enrichis ; vérification **`python -m build`** + installation
   du wheel dans un venv propre (import + `__version__`).
-- **`docs/release_notes_1_0_0.md`** pour publication / GitHub Release ; **`docs/release_validation_checklist.md`**
+- **`docs/v1.0.0/02_release_notes.md`** pour publication / GitHub Release ; **`docs/03_release_validation_checklist.md`**
   (LICENSE + test pip wheel) ; **`.gitignore`** (`.venv-pypi-test/`).
 
 ### Buts
@@ -36,9 +51,9 @@
 - Passe **stabilisation Beta/RC** : rejouée checklist release (black, flake8, pylint, mypy, bandit,
   pytest/couverture, `verify_test_mirror`, `python -m build`, intégration externe avec
   `BAOBAB_RUN_EXTERNAL_INTEGRATION=1` et scénario timeout) — tout vert sur le commit courant.
-- **`docs/release_beta_rc_recommendation.md`** : recommandation **1.0.0 direct** (par défaut) ou
+- **`docs/v1.0.0/03_release_beta_rc_recommendation.md`** : recommandation **1.0.0 direct** (par défaut) ou
   **`1.0.0rc1`** prudente ; **1.0.0b1** peu adapté tant que l’API est déjà figée en 1.0.0.
-- **`docs/release_validation_checklist.md`** : lignes black / miroir / build ; section décision Beta/RC.
+- **`docs/03_release_validation_checklist.md`** : lignes black / miroir / build ; section décision Beta/RC.
 
 ### Buts
 - Documenter la décision de publication sans incohérence entre version dépôt, classifiers et contrat public.
@@ -56,7 +71,7 @@
 - **`docs/examples/pagination_minimal.py`** et **`bulk_file_downloader_minimal.py`** : imports depuis le
   package racine (`__all__`).
 - **`pyproject.toml`** : `[project.urls]` (Homepage, Repository, Documentation, Changelog).
-- **`CHANGELOG.md`** [Unreleased], **`docs/release_validation_checklist.md`** (cohérence README PyPI).
+- **`CHANGELOG.md`** [Unreleased], **`docs/03_release_validation_checklist.md`** (cohérence README PyPI).
 
 ### Buts
 - Permettre à un développeur externe d’installer et d’utiliser la lib **sans lire le code**, avec une
@@ -73,7 +88,7 @@
   d’auth, `RetryPolicy`, `RateLimitPolicy`, pagination `PageResult` / `NextPageUrlExtractor` /
   `PageExtractor`, `BaobabWebApiCaller`) ; `__version__` et `pyproject.toml` alignés sur **1.0.0** ;
   classifier **Production/Stable**.
-- Documentation : `docs/public_api_1_0_0.md`, `docs/checklist_go_1_0_0.md` ;
+- Documentation : `docs/v1.0.0/00_public_api.md`, `docs/v1.0.0/01_checklist_go.md` ;
   README (API stable, limites, imports racine) ; `CHANGELOG.md` section `[1.0.0]` ; `docs/01_specifications.md` §13 ;
   exemple `docs/examples/service_caller_minimal.py` avec imports racine.
 - Tests : `test_public_api_exports.py` ; `test_package_metadata.py` (version **1.0.0**).
@@ -82,7 +97,7 @@
 - Rendre l’API publique **volontaire** et documentée pour Semantic Versioning à partir de la 1.0.0.
 
 ### Impact
-- Les consommateurs peuvent s’appuyer sur `__all__` et `docs/public_api_1_0_0.md` ; les modules internes
+- Les consommateurs peuvent s’appuyer sur `__all__` et `docs/v1.0.0/00_public_api.md` ; les modules internes
   hors `__all__` restent évolutifs sans bump majeur tant qu’ils ne sont pas promus.
 
 ## 2026-03-21 12:00:00
@@ -96,7 +111,7 @@
   fixture optionnelle `BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1` pour le cas delay.
 - `helpers` : URLs publiques, `ServiceConfig`/`BaobabServiceCaller` en mode « une tentative ».
 - `pyproject.toml` : marqueur pytest `integration_external` ; documentation `README.md`,
-  `docs/release_validation_checklist.md`, `docs/01_specifications.md` §12.4, `CHANGELOG.md`.
+  `docs/03_release_validation_checklist.md`, `docs/01_specifications.md` §12.4, `CHANGELOG.md`.
 
 ### Buts
 - Offrir un dernier contrôle réaliste avant release sans rendre la CI dépendante du réseau ni des tiers.
@@ -107,7 +122,7 @@
 ## 2026-03-17 12:00:00
 
 ### Modifications
-- Complétion des sections `### Buts` manquantes pour toutes les entrées du **2026-03-19** dans `docs/dev_diary.md` ; ajout du `### Impact` manquant pour **2026-03-19 20:29:43**.
+- Complétion des sections `### Buts` manquantes pour toutes les entrées du **2026-03-19** dans `docs/02_dev_diary.md` ; ajout du `### Impact` manquant pour **2026-03-19 20:29:43**.
 
 ### Buts
 - Aligner l’intégralité du journal sur le format imposé par `docs/00_dev_constraints.md` (date / Modifications / Buts / Impact).
@@ -118,7 +133,7 @@
 ## 2026-03-19 23:45:00
 
 ### Modifications
-- Passe validation release : alignement outillage (`mypy`, `flake8`, `black`, `pylint`, `pytest`, couverture) avec ce qui est documenté pour la publication ; ajout `docs/release_validation_checklist.md` et `docs/verify_test_mirror.py`.
+- Passe validation release : alignement outillage (`mypy`, `flake8`, `black`, `pylint`, `pytest`, couverture) avec ce qui est documenté pour la publication ; ajout `docs/03_release_validation_checklist.md` et `docs/04_verify_test_mirror.py`.
 - Correctifs techniques : `ErrorResponseMapper._extract_diagnostic_headers` (`Mapping[str, str]`) ; ignores/types de tests pour ABC et `PageResult` ; `RequestUrlBuilder` sans import inutilisé ; `pyproject.toml` `min-similarity-lines` pour pylint ; suppressions pylint locales (`HttpTransportCaller.call`, `BulkFileDownloader.download`, accès interne dans `test_throttler`).
 - `CHANGELOG` [Unreleased] : avertissement pré-release + entrées liées à la checklist ; `README` : renvoi vers la checklist et le script miroir.
 - Intégration Git sur `main` : commit unique conforme Conventional Commits (`chore(release): ...`).

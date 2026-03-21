@@ -391,7 +391,7 @@ Le format recommandé est **reStructuredText**.
 
 ### 8.11 Journal de développement
 
-Le projet doit maintenir un journal de développement dans `docs/dev_diary.md`.
+Le projet doit maintenir un journal de développement dans `docs/02_dev_diary.md`.
 
 ### 8.12 Typage
 
@@ -681,10 +681,10 @@ des services HTTP publics de test (**HTTPBin** et **Postman Echo** uniquement).
 Le projet doit fournir les éléments suivants :
 - `README.md` à la racine ;
 - `CHANGELOG.md` à la racine ;
-- `docs/dev_diary.md` ;
+- `docs/02_dev_diary.md` ;
 - documentation interne par docstrings ;
 - exemples d'utilisation simples ;
-- pour les versions **1.0.0+**, référence du **contrat public** : `docs/public_api_1_0_0.md` (symboles
+- pour les versions **1.0.0+**, référence du **contrat public** : `docs/v1.0.0/00_public_api.md` (symboles
   stables exportés par le package racine via `__all__`).
 
 ### 13.1 Contenu attendu du README
@@ -823,7 +823,7 @@ Le projet sera considéré conforme lorsque les conditions suivantes seront réu
 - tous les outils qualité passent sans erreur ;
 - les docstrings publiques sont présentes ;
 - le `README.md` et le `CHANGELOG.md` existent ;
-- le journal `docs/dev_diary.md` est présent et correctement structuré ;
+- le journal `docs/02_dev_diary.md` est présent et correctement structuré ;
 - le package est installable et importable ;
 - une utilisation basique en service REST est démontrable.
 
@@ -851,7 +851,7 @@ Les livrables minimaux du projet sont :
 - les tests unitaires ;
 - le `README.md` ;
 - le `CHANGELOG.md` ;
-- le `docs/dev_diary.md` ;
+- le `docs/02_dev_diary.md` ;
 - les rapports de couverture dans `docs/tests/coverage` ;
 - la première version publiable de la librairie.
 

@@ -261,9 +261,9 @@ class DataProcessor:
 
 ## Journal de développement
 
-### Fichier dev_diary.md
+### Fichier 02_dev_diary.md
 
-- Le journal de développement doit être tenu dans `docs/dev_diary.md`
+- Le journal de développement doit être tenu dans `docs/02_dev_diary.md`
 - **Format des logs** : Classés par **date et heure décroissantes** (les plus récents en premier)
 
 ### Contenu de chaque log

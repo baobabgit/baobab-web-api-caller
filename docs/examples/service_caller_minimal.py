@@ -1,7 +1,7 @@
 """Exemple minimal d'utilisation de BaobabServiceCaller.
 
 Préférez les imports depuis le package racine (contrat stable 1.0.0 ;
-voir `docs/public_api_1_0_0.md`).
+voir `docs/v1.0.0/00_public_api.md`).
 """
 
 from __future__ import annotations

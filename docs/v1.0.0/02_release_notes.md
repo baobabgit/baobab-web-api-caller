@@ -20,7 +20,7 @@ Python **3.11**, **3.12** ou **3.13**.
 ## Points clés
 
 - **Contrat public** : symboles garantis listés dans `baobab_web_api_caller.__all__` (voir
-  [`docs/public_api_1_0_0.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/public_api_1_0_0.md)).
+  [`docs/v1.0.0/00_public_api.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/v1.0.0/00_public_api.md)).
 - **Documentation produit** : [`README.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/README.md)
   (page PyPI).
 - **Qualité** : tests unitaires, couverture élevée, suite d’intégration externe optionnelle (HTTPBin /
@@ -37,7 +37,7 @@ API figée **1.0.0** avec surface exportée explicite.
 |-----------|-----|
 | Dépôt | https://github.com/baobabgit/baobab-web-api-caller |
 | Changelog détaillé | [`CHANGELOG.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/CHANGELOG.md) |
-| Checklist release | [`docs/release_validation_checklist.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/release_validation_checklist.md) |
+| Checklist release | [`docs/03_release_validation_checklist.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/03_release_validation_checklist.md) |
 
 ## Contributeurs
 

@@ -6,10 +6,10 @@ produit (état coché = validé dans le dépôt courant, sauf actions **manuelle
 
 ## 1. Stabilité de l’API publique
 
-- [x] Les classes publiques exposées dans `src/baobab_web_api_caller/__init__.py` sont figées pour la 1.0.0 (`__all__` documenté dans `docs/public_api_1_0_0.md`).
+- [x] Les classes publiques exposées dans `src/baobab_web_api_caller/__init__.py` sont figées pour la 1.0.0 (`__all__` documenté dans `docs/v1.0.0/00_public_api.md`).
 - [x] Les signatures publiques de `BaobabServiceCaller` sont figées (contrat typé + docstrings ; évolutions rétrocompatibles en 1.x).
 - [x] Les signatures publiques de `BaobabRequest` et `BaobabResponse` sont figées.
-- [x] Les stratégies d’authentification publiques sont figées (export racine + liste dans `docs/public_api_1_0_0.md`).
+- [x] Les stratégies d’authentification publiques sont figées (export racine + liste dans `docs/v1.0.0/00_public_api.md`).
 - [x] La hiérarchie d’exceptions publiques est figée (export racine).
 - [x] Toute rupture d’API identifiée a été soit supprimée, soit repoussée à une future 2.0.0 (hors `__all__` : modules internes non garantis).
 
@@ -34,7 +34,7 @@ produit (état coché = validé dans le dépôt courant, sauf actions **manuelle
 
 ## 3. Validation qualité
 
-Commandes alignées sur `docs/release_validation_checklist.md` (black inclut `docs/examples`).
+Commandes alignées sur `docs/03_release_validation_checklist.md` (black inclut `docs/examples`).
 
 - [x] `python -m black --check src tests docs/examples` passe
 - [x] `python -m flake8` passe
@@ -50,7 +50,7 @@ Commandes alignées sur `docs/release_validation_checklist.md` (black inclut `do
 - [x] Les tests HTTPBin passent *(avec `BAOBAB_RUN_EXTERNAL_INTEGRATION=1`)*
 - [x] Les tests Postman Echo passent
 - [x] Scénarios critiques couverts en réel : GET + query, query multi-valeurs, headers, POST JSON, auth, erreur HTTP, timeout/delay si activé
-- [x] Les tests externes sont documentés comme opt-in (`README.md`, `docs/release_validation_checklist.md`)
+- [x] Les tests externes sont documentés comme opt-in (`README.md`, `docs/03_release_validation_checklist.md`)
 - [x] Les skips réseau sont propres et expliqués (`tests/.../integration_external/conftest.py`)
 
 ## 5. Documentation produit
@@ -61,8 +61,8 @@ Commandes alignées sur `docs/release_validation_checklist.md` (black inclut `do
 - [x] La doc explique ce que la librairie fait et ce qu’elle ne fait pas
 - [x] Les exemples sous `docs/examples/` sont à jour *(imports racine recommandés)*
 - [x] `CHANGELOG.md` décrit la version **1.0.0** et l’[Unreleased] reste factuel
-- [x] `docs/release_notes_1_0_0.md` : notes de publication synthétiques
-- [x] `docs/dev_diary.md` tenu à jour pour les livraisons majeures
+- [x] `docs/v1.0.0/02_release_notes.md` : notes de publication synthétiques
+- [x] `docs/02_dev_diary.md` tenu à jour pour les livraisons majeures
 
 ## 6. Packaging / publication
 
@@ -87,12 +87,12 @@ Commandes alignées sur `docs/release_validation_checklist.md` (black inclut `do
 
 | Document | Rôle |
 |----------|------|
-| `docs/release_validation_checklist.md` | Ordre des commandes et contrôles avant tag |
-| `docs/release_beta_rc_recommendation.md` | Choix direct 1.0.0 vs pré-release `rc` |
-| `docs/public_api_1_0_0.md` | Liste du contrat public stable |
-| `docs/release_notes_1_0_0.md` | Texte de GitHub Release / annonce |
+| `docs/03_release_validation_checklist.md` | Ordre des commandes et contrôles avant tag |
+| `docs/v1.0.0/03_release_beta_rc_recommendation.md` | Choix direct 1.0.0 vs pré-release `rc` |
+| `docs/v1.0.0/00_public_api.md` | Liste du contrat public stable |
+| `docs/v1.0.0/02_release_notes.md` | Texte de GitHub Release / annonce |
 
 ## Historique du fichier
 
 - Checklist initiale pour le gel API ; mises à jour successives après intégration externe, doc produit,
-  passes Beta/RC, packaging PyPI (**LICENSE**, build, `release_notes_1_0_0.md`).
+  passes Beta/RC, packaging PyPI (**LICENSE**, build, `02_release_notes.md`).

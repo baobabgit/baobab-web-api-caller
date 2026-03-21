@@ -1,7 +1,7 @@
 # Recommandation Beta / RC / stable — passage vers 1.0.0 PyPI
 
 Document de décision pour la **passe de stabilisation** avant publication **PyPI**. À jour lors des
-revues release (voir aussi `docs/release_validation_checklist.md`).
+revues release (voir aussi `docs/03_release_validation_checklist.md`).
 
 ## État du dépôt au moment de la dernière validation automatisée
 
@@ -15,9 +15,9 @@ Les contrôles suivants ont été **rejoués avec succès** sur le commit couran
 | Typage | `mypy .` | Success |
 | Sécurité | `python -m bandit -r src` | OK |
 | Tests + couverture | `python -m pytest` | OK ; ~93 % (seuil ≥ 90 %) |
-| Miroir tests | `python docs/verify_test_mirror.py` | `gaps 0` |
+| Miroir tests | `python docs/04_verify_test_mirror.py` | `gaps 0` |
 | Build packaging | `python -m build` | wheel + sdist OK |
-| Intégration externe | `BAOBAB_RUN_EXTERNAL_INTEGRATION=1` + `BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1` + pytest `integration_external` | 12 passed *(réseau requis)* |
+| Intégration externe | `BAOBAB_RUN_EXTERNAL_INTEGRATION=1` + `pytest` complet | 162 passed, 1 skipped *(réseau requis ; le skip peut être le scénario delay/timeout optionnel)* |
 
 > **Note** : sans variable d’environnement, les tests d’intégration sont **skippés** (comportement
 > attendu pour CI hors réseau).
@@ -26,7 +26,7 @@ Les contrôles suivants ont été **rejoués avec succès** sur le commit couran
 
 - `pyproject.toml` et `baobab_web_api_caller.__version__` : **1.0.0**
 - Classifier PyPI : **Development Status :: 5 - Production/Stable**
-- Contrat public : `__all__` + `docs/public_api_1_0_0.md`
+- Contrat public : `__all__` + `docs/v1.0.0/00_public_api.md`
 
 Le dépôt est donc **déjà positionné** sur une cible **1.0.0 stable** côté code et métadonnées.
 

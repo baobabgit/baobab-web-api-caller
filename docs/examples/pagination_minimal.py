@@ -1,6 +1,6 @@
 """Exemple minimal d'utilisation du Paginator.
 
-Imports depuis le package racine (contrat stable 1.0.0) ; voir `docs/public_api_1_0_0.md`.
+Imports depuis le package racine (contrat stable 1.0.0) ; voir `docs/v1.0.0/00_public_api.md`.
 """
 
 from __future__ import annotations
