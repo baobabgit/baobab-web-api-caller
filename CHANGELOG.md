@@ -9,11 +9,15 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Added
 
+- **`LICENSE`** : texte **MIT** à la racine ; métadonnées PyPI `license = { file = "LICENSE" }`.
+- **`docs/release_notes_1_0_0.md`** : release notes **1.0.0** (résumé installable, liens, pas de promesse hors dépôt).
 - **`docs/release_beta_rc_recommendation.md`** : recommandation **Beta / RC / 1.0.0 stable** et trace des
   validations release.
 
 ### Changed
 
+- **`pyproject.toml`** : description courte PyPI affinée ; `license` via fichier **LICENSE** ; mots-clés
+  et classifiers (**OS Independent**, sujets HTTP / bibliothèques) pour une fiche PyPI complète.
 - **`docs/release_validation_checklist.md`** : contrôles **black** (incl. `docs/examples`), **miroir**
   tests, **build** optionnel ; lien vers **`docs/release_beta_rc_recommendation.md`** (Beta / RC /
   stable).

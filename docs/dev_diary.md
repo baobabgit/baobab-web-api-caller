@@ -1,5 +1,20 @@
 # Journal de développement
 
+## 2026-03-21 23:30:00
+
+### Modifications
+- **Packaging PyPI 1.0.0** : fichier **`LICENSE`** (MIT) ; `pyproject.toml` — `license = { file = "LICENSE" }`,
+  description courte, keywords et classifiers enrichis ; vérification **`python -m build`** + installation
+  du wheel dans un venv propre (import + `__version__`).
+- **`docs/release_notes_1_0_0.md`** pour publication / GitHub Release ; **`docs/release_validation_checklist.md`**
+  (LICENSE + test pip wheel) ; **`.gitignore`** (`.venv-pypi-test/`).
+
+### Buts
+- Publier sur PyPI sans ambiguïté de licence, version et maturité.
+
+### Impact
+- Les métadonnées affichées sur PyPI sont alignées sur un artefact installable testé localement.
+
 ## 2026-03-21 22:00:00
 
 ### Modifications
