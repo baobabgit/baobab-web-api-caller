@@ -45,6 +45,9 @@ d’environnement, les cas sont **ignorés** (`skip`), pas échoués.
 
 ## Cohérence dépôt / documentation
 
+- [ ] **README PyPI** : le `README.md` (affiché sur PyPI) décrit fidèlement l’installation, les cas
+  d’usage principaux et les limites, sans promesse non vérifiable dans `src/` ; les liens vers les
+  exemples pointent vers le dépôt GitHub (chemins `docs/examples/` valides).
 - [ ] **Miroir tests** : chaque `src/baobab_web_api_caller/**/*.py` hors `__init__.py` a un
   `tests/baobab_web_api_caller/**/test_<module>.py` (exceptions documentées : `CallContext` /
   `build_call_context`, `mapping_utils`). Vérification rapide :

@@ -699,6 +699,12 @@ Le `README.md` doit contenir au minimum :
 - des indications de contribution ;
 - la licence.
 
+Pour une publication **PyPI**, le README sert de **page produit** : il doit permettre à un utilisateur
+externe de comprendre la valeur, d’installer et d’utiliser la librairie sans lire le code ; les liens
+vers les fichiers du dépôt doivent utiliser l’URL du dépôt (chemins relatifs insuffisants sur la page
+PyPI). Des sections sur les **erreurs**, les **limites** et les **tests d’intégration** optionnels sont
+recommandées lorsque ces aspects font partie du comportement documenté.
+
 ### 13.2 Documentation technique interne
 
 La documentation interne doit expliquer :
