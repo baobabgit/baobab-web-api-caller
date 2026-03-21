@@ -1,5 +1,22 @@
 # Journal de développement
 
+## 2026-03-21 12:27:17
+
+### Modifications
+- **Publication officielle 1.0.0 (préparation)** : suite de validations pré-release exécutée avec succès —
+  `pytest` (couverture ≥ 90 %), `black --check .`, `flake8 src tests`, `pylint src tests`, `mypy src`,
+  `bandit -r src` ; version **`1.0.0`** confirmée dans `pyproject.toml` ; `CHANGELOG.md` section **[1.0.0]**
+  cohérente ; `README.md` et lien roadmap prêts pour PyPI ; commit **`chore(release): prepare v1.0.0`** puis
+  tag annoté **`v1.0.0`**, build `python -m build`, contrôle `twine check`, upload **`twine upload`** vers
+  PyPI.
+
+### Buts
+- Publier la librairie **baobab-web-api-caller** en **1.0.0** sur PyPI de façon reproductible et traçable.
+
+### Impact
+- Les utilisateurs peuvent installer `baobab-web-api-caller==1.0.0` depuis l’index public ; le dépôt pointe
+  sur un tag annoté aligné avec les artefacts wheel/sdist.
+
 ## 2026-03-17 12:00:00
 
 ### Modifications

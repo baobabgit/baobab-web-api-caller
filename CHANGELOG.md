@@ -9,6 +9,7 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Added
 
+- **`docs/roadmaps/roadmap_v1.md`** : roadmap post-1.0.0 (patch / 1.1.x / 2.0.0) et périmètre explicite hors 1.0.0.
 - Arborescence **`docs/v1.0.0/`** : documents figés pour la release **1.0.0** (`00_public_api.md`, `01_checklist_go.md`, `02_release_notes.md`, `03_release_beta_rc_recommendation.md`).
 - Préfixes numériques **`02_`**, **`03_`**, **`04_`** pour le journal, la checklist release et le script miroir tests à la racine de `docs/`.
 

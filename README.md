@@ -219,7 +219,7 @@ Détails : [`docs/03_release_validation_checklist.md`](https://github.com/baobab
 - Décodage JSON : selon les règles de `Content-Type` ci-dessus ; pas de désérialisation vers des
   modèles Pydantic/dataclasses intégrée.
 - Évolutions envisagées (hors contrat détaillé ici) : retry avancé, async, pagination plus riche — voir
-  `CHANGELOG.md`.
+  `CHANGELOG.md` et la **roadmap post-1.0.0** : [`docs/roadmaps/roadmap_v1.md`](docs/roadmaps/roadmap_v1.md).
 
 ---
 
