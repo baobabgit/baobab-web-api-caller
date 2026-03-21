@@ -1,14 +1,19 @@
-"""Exemple minimal d'utilisation de BulkFileDownloader."""
+"""Exemple minimal d'utilisation de BulkFileDownloader.
+
+Imports depuis le package racine (contrat stable 1.0.0) ; voir `docs/public_api_1_0_0.md`.
+"""
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from baobab_web_api_caller.config.service_config import ServiceConfig
-from baobab_web_api_caller.core.baobab_request import BaobabRequest
-from baobab_web_api_caller.core.http_method import HttpMethod
-from baobab_web_api_caller.download.bulk_file_downloader import BulkFileDownloader
-from baobab_web_api_caller.transport.requests_session_factory import RequestsSessionFactory
+from baobab_web_api_caller import (
+    BaobabRequest,
+    BulkFileDownloader,
+    HttpMethod,
+    RequestsSessionFactory,
+    ServiceConfig,
+)
 
 
 def main() -> None:

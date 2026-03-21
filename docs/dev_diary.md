@@ -1,5 +1,25 @@
 # Journal de développement
 
+## 2026-03-21 20:00:00
+
+### Modifications
+- **README** : refonte pour **audience utilisateur** et page PyPI — proposition de valeur, installation,
+  quickstart inline, authentification (tableau), erreurs (tableau + extrait), pagination / download avec
+  liens GitHub, tests d’intégration, limites, section contributeurs ; suppression du détail « miroir
+  tests » du flux principal.
+- **`docs/examples/pagination_minimal.py`** et **`bulk_file_downloader_minimal.py`** : imports depuis le
+  package racine (`__all__`).
+- **`pyproject.toml`** : `[project.urls]` (Homepage, Repository, Documentation, Changelog).
+- **`CHANGELOG.md`** [Unreleased], **`docs/release_validation_checklist.md`** (cohérence README PyPI).
+
+### Buts
+- Permettre à un développeur externe d’installer et d’utiliser la lib **sans lire le code**, avec une
+  doc alignée sur le comportement réel.
+
+### Impact
+- PyPI et le dépôt présentent un message produit cohérent ; les affirmations vérifiables renvoient au code
+  ou aux exemples versionnés.
+
 ## 2026-03-21 18:00:00
 
 ### Modifications

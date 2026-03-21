@@ -1,60 +1,34 @@
 # baobab-web-api-caller
 
-Librairie Python orientée objet pour simplifier, standardiser et fiabiliser les appels HTTP(S)
-vers des API REST.
+**Client HTTP(S) REST synchrone pour Python** — modèles typés (`BaobabRequest` / `BaobabResponse`), façade
+`BaobabServiceCaller`, transport `requests` avec retry, throttling et erreurs normalisées.
 
-**Version stable 1.0.0** — licence **MIT**. Voir `CHANGELOG.md` et la **surface publique garantie**
-dans `docs/public_api_1_0_0.md` (symboles exportés via `baobab_web_api_caller.__all__`).
+| | |
+|---|---|
+| **Version** | 1.0.0 (stable) |
+| **Python** | 3.11 à 3.13 |
+| **Licence** | MIT |
+| **Dépendance runtime** | `requests` ≥ 2.32 |
 
-## API publique stable (1.0.0)
+> **PyPI** : sur la page du projet, les liens vers les fichiers du dépôt pointent vers GitHub. En local,
+> les chemins `docs/...` désignent les mêmes fichiers.
 
-À partir de la **1.0.0**, les symboles listés dans `__all__` au package racine constituent le **contrat
-de compatibilité** pour les versions **1.x.y** (ajouts rétrocompatibles autorisés ; ruptures
-nécessitant une version **majeure** 2.0.0). Cela inclut notamment :
+---
 
-- modèles et façade : `BaobabRequest`, `BaobabResponse`, `HttpMethod`, `BaobabServiceCaller`, `BaobabWebApiCaller` ;
-- transport : `HttpTransportCaller`, `RequestsSessionFactory` ;
-- configuration : `ServiceConfig`, `RetryPolicy`, `RateLimitPolicy` ;
-- authentification : `AuthenticationStrategy` et les stratégies fournies (Bearer, Basic, clés API, absence d’auth) ;
-- exceptions : `BaobabWebApiCallerException` et la hiérarchie documentée (HTTP, transport, timeout, configuration, etc.) ;
-- pagination : `Paginator`, `PageResult`, `NextPageUrlExtractor`, `PageExtractor` ;
-- téléchargement : `BulkFileDownloader`.
+## Proposition de valeur
 
-Les **sous-modules** (`baobab_web_api_caller.transport`, `core`, …) restent importables pour des usages
-avancés ; seuls les noms dans `__all__` sont **garantis** pour le suivi semver. Référence :
-`docs/public_api_1_0_0.md`. Checklist de publication : `docs/checklist_go_1_0_0.md`.
+- **Appels REST synchrones** sans réinventer la roue : URL, query (simple ou multi-valeurs), JSON ou
+  formulaire, timeouts.
+- **Authentification composable** : Bearer, Basic, clé en en-tête ou en query, ou pas d’auth.
+- **Résilience configurable** : politique de **retry** (tentatives, backoff) et **throttling** (débit).
+- **Erreurs exploitables** : exceptions du projet avec `status_code`, extrait de corps et sous-ensemble
+  d’en-têtes utiles pour les erreurs HTTP.
+- **Pagination** et **téléchargement fichier en streaming** sur la même base (`ServiceConfig` + transport).
 
-## Ce que la librairie fait / ne fait pas
+Ce que la lib **ne fournit pas** : client **async**, parsing de schémas métier au-delà du JSON générique,
+gestion automatique de `Retry-After` (voir [Limites connues](#limites-connues)).
 
-**Fait** (périmètre 1.0.0) :
-
-- Appels HTTP(S) **synchrones** via `requests`, avec construction d’URL, query params (y compris multi-valeurs), corps JSON ou formulaire.
-- Fusion d’en-têtes (défauts service → requête → authentification), retry configurable, throttling, timeouts.
-- Mapping des erreurs HTTP et réseau vers des **exceptions typées** du projet.
-- Pagination par **URL de page suivante** et téléchargement **streaming** de fichiers.
-
-**Ne fait pas** (hors périmètre ou non garanti dans l’API stable) :
-
-- Client **asynchrone** (async/await) — évolution envisagée ultérieurement.
-- Gestion fine de `Retry-After` ou politiques de retry avancées au-delà de ce qui est exposé aujourd’hui.
-- Modules internes non exportés dans `__all__` (décoders, `build_call_context`, etc.) : peuvent évoluer sans bump majeur tant qu’ils ne sont pas promus au package racine.
-
-## Principes
-
-- **Orienté objet et composition**: chaque brique (auth, config, transport, pagination, download) est injectable.
-- **Une classe par fichier**: structure stable et lisible.
-- **Modèles HTTP typés**: `BaobabRequest` / `BaobabResponse` indépendants du transport.
-- **Erreurs normalisées**: hiérarchie d’exceptions dédiée au projet, enrichies avec le contexte HTTP utile (code, extrait de body, quelques headers).
-
-## Architecture (aperçu)
-
-- **`config/`**: `ServiceConfig`, `RetryPolicy`, `RateLimitPolicy`, headers par défaut.
-- **`auth/`**: stratégies d’authentification (bearer/basic/api key…).
-- **`core/`**: modèles et contrats (request/response, decoder, mapper d’erreurs…).
-- **`transport/`**: exécution HTTP synchrone via `requests` (retry + throttling).
-- **`service/`**: façade de haut niveau (`BaobabServiceCaller`).
-- **`pagination/`**: itération générique sur pages via “next page URL”.
-- **`download/`**: téléchargement streaming de fichiers (`BulkFileDownloader`).
+---
 
 ## Installation
 
@@ -63,149 +37,220 @@ python -m pip install -U pip
 python -m pip install baobab-web-api-caller
 ```
 
-Pour un environnement de développement local :
+Développement du dépôt (outillage qualité) :
 
 ```bash
-python -m pip install -U pip
 python -m pip install -e ".[dev]"
 ```
 
-## Démarrage rapide
+**Contrat public stable** : les symboles garantis en **1.x** sont listés dans `baobab_web_api_caller.__all__`
+et décrits dans le dépôt : [`docs/public_api_1_0_0.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/public_api_1_0_0.md).
 
-Imports recommandés depuis le **package racine** (contrat stable) :
+---
+
+## Quickstart
+
+### 1. Construire le service
+
+Imports depuis le **package racine** (recommandé) :
 
 ```python
 from baobab_web_api_caller import (
     BaobabServiceCaller,
-    BearerAuthenticationStrategy,
     HttpTransportCaller,
+    NoAuthenticationStrategy,
     RequestsSessionFactory,
     ServiceConfig,
 )
+
+config = ServiceConfig(
+    base_url="https://api.example.com",
+    authentication_strategy=NoAuthenticationStrategy(),
+    default_timeout_seconds=30.0,
+)
+transport = HttpTransportCaller.from_service_config(
+    service_config=config,
+    session_factory=RequestsSessionFactory(),
+)
+service = BaobabServiceCaller(service_config=config, web_api_caller=transport)
 ```
 
-### Appel simple via façade de service
+### 2. Appeler l’API
 
-Voir `docs/examples/service_caller_minimal.py`.
+La façade expose des raccourcis : `get`, `post`, `put`, `patch`, `delete`, `head`, `options`. Chacun
+délègue à `BaobabRequest` + transport (pas de fusion des en-têtes par défaut côté façade : voir
+[En-têtes](#en-têtes-et-query-params)).
 
-### Pagination (next page URL dans le contenu)
-
-Voir `docs/examples/pagination_minimal.py`.
-
-### Téléchargement streaming
-
-Voir `docs/examples/bulk_file_downloader_minimal.py`.
-
-`BulkFileDownloader` utilise la même construction de contexte (`build_call_context`) que le transport
-classique et **ferme explicitement** la `requests.Session` et la `responses.Response` en streaming
-après l’appel (succès comme erreur), pour éviter les fuites ; les erreurs HTTP sont mappées via
-`ErrorResponseMapper`, comme dans `HttpTransportCaller`.
-
-### Transport HTTP synchrone (comportement)
-Le transport synchrone (`HttpTransportCaller`) applique :
-- le throttling avant chaque tentative ;
-- le retry selon `RetryPolicy` (erreurs réseau, `429` et `5xx`) ;
-- le mapping des erreurs HTTP via `ErrorResponseMapper` ;
-- la fermeture explicite des sessions/réponses `requests` pour éviter les fuites ;
-- le décodage JSON via `JsonResponseDecoder` uniquement pour `Content-Type: application/json` ou
-  `application/*+json` (sinon pas de décodage automatique du corps).
-
-### En-têtes HTTP (fusion)
-La fusion finale des en-têtes est centralisée dans `build_call_context` (transport), dans cet ordre de
-priorité croissante pour une même clé :
-1. en-têtes par défaut du service (`ServiceConfig.default_headers`) ;
-2. en-têtes de la `BaobabRequest` (ils écrasent les valeurs par défaut) ;
-3. stratégie d'authentification (appliquée en dernier ; peut définir ou remplacer des clés comme
-   `Authorization`).
-
-La façade `BaobabServiceCaller` délègue la requête au transport sans fusionner les défauts elle-même.
-
-### Paramètres de requête (query params)
-`BaobabRequest.query_params` et le paramètre `query_params=` des raccourcis `BaobabServiceCaller`
-(`get`, `post`, etc.) supportent :
-- une valeur `str` pour une clé unique ;
-- une `Sequence[str]` pour des clés répétées (ex: `{"tag": ["a", "b"]}`).
-
-Lors de la construction de l'URL, les valeurs séquentielles sont encodées comme des clés répétées (même clé, plusieurs occurrences).
-
-La pagination préserve également ces paramètres dupliqués quand ils sont présents dans l'URL de page suivante.
-
-### Tests (granularité miroir)
-
-Règle générale : pour chaque `src/baobab_web_api_caller/**/<nom>.py` (hors `__init__.py`), le fichier de
-tests correspondant est `tests/baobab_web_api_caller/**/test_<nom>.py`, avec une classe `Test<…>` dédiée.
-
-**Cas particuliers documentés** :
-
-- `transport/call_context_builder.py` : le dataclass `CallContext` est couvert par
-  `tests/.../transport/test_call_context.py` ; la fonction `build_call_context` par
-  `tests/.../transport/test_call_context_builder.py` (classe `TestBuildCallContext`).
-- `utils/mapping_utils.py` : pas de classe source ; le miroir est `tests/.../utils/test_mapping_utils.py`
-  (classe `TestFreezeStrMapping` pour `freeze_str_mapping`).
-
-**Exemples de fichiers déjà présents** (non exhaustif) :
-
-- `auth/authentication_strategy.py` → `tests/.../auth/test_authentication_strategy.py`
-- `core/response_decoder.py` → `tests/.../core/test_response_decoder.py`
-- `pagination/page_extractor.py`, `next_page_url_extractor.py`, `page_result.py`, `paginator.py` → un
-  `test_*.py` par module dans `tests/.../pagination/`
-- `transport/http_transport_caller.py`, `requests_session_factory.py`, `call_context_builder.py`,
-  `sleeper.py`, `system_sleeper.py`, `system_time_provider.py`, `throttler.py`, `time_provider.py` → un
-  `test_*.py` par module dans `tests/.../transport/`
-- Exceptions HTTP : pas de `test_http_exceptions.py` agrégé ; un fichier par classe sous
-  `tests/.../exceptions/` (ex. `test_http_exception.py`, `test_client_http_exception.py`, …).
-
-Si l’UI Git n’affiche pas tout le dossier `tests/`, développer l’arborescence ou cloner à jour : les fichiers
-ci-dessus font partie du dépôt courant. Un cache pytest local obsolète peut encore mentionner d’anciens chemins
-de tests : exécuter `pytest` après suppression de `.pytest_cache` si besoin.
-
-## Validation locale (qualité)
-
-```bash
-black .
-python -m pylint src tests
-mypy .
-python -m flake8
-python -m bandit -r src
-pytest
+```python
+response = service.get("/v1/status", query_params={"env": "prod"})
+assert response.status_code == 200
+# JSON décodé si Content-Type: application/json ou application/*+json
+data = response.json_data
 ```
 
-Avant une **release** (tag, PyPI), suivre en plus `docs/release_validation_checklist.md` et vérifier
-le miroir des tests avec `python docs/verify_test_mirror.py` (attendu : `gaps 0`).
+Exemples complets (fichiers exécutables) :
 
-### Tests d'intégration externes (release gate, HTTPBin + Postman Echo)
+- [Service minimal](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/examples/service_caller_minimal.py)
 
-Une suite **optionnelle** valide le comportement réel contre des services publics de test (**HTTPBin**,
-**Postman Echo**). Elle complète les tests unitaires : **elle ne s'exécute pas par défaut** et ne doit
-pas être requise dans une CI stricte sans réseau contrôlé.
+---
 
-**Activation (obligatoire pour lancer ces tests)** :
+## Authentification
 
-- Définir `BAOBAB_RUN_EXTERNAL_INTEGRATION=1` (valeur exacte `1`).
-- Sous **PowerShell** : `$env:BAOBAB_RUN_EXTERNAL_INTEGRATION = "1"`
-- Sous **bash** : `export BAOBAB_RUN_EXTERNAL_INTEGRATION=1`
+Les stratégies implémentent `AuthenticationStrategy` et s’injectent dans `ServiceConfig`.
 
-**Lancer uniquement cette suite** (sans couverture, pour éviter un seuil `fail_under` trompeur si vous
-ne lancez que ces tests) :
+| Stratégie | Usage typique |
+|-----------|----------------|
+| `NoAuthenticationStrategy` | Pas d’auth |
+| `BearerAuthenticationStrategy` | `Authorization: Bearer <token>` |
+| `BasicAuthenticationStrategy` | HTTP Basic (`username` / `password`) |
+| `ApiKeyHeaderAuthenticationStrategy` | Clé dans un en-tête (nom + valeur) |
+| `ApiKeyQueryAuthenticationStrategy` | Clé dans la query (sans écraser les valeurs existantes) |
+
+```python
+from baobab_web_api_caller import BearerAuthenticationStrategy, ServiceConfig
+
+config = ServiceConfig(
+    base_url="https://api.example.com",
+    authentication_strategy=BearerAuthenticationStrategy(token="votre-jeton"),
+)
+```
+
+L’ordre de **fusion des en-têtes** pour une même clé est : défauts du service → en-têtes de la requête
+→ **authentification en dernier** (peut définir ou remplacer `Authorization`).
+
+---
+
+## En-têtes et query params
+
+- **En-têtes par défaut** : `ServiceConfig.default_headers`.
+- **Par requête** : argument `headers=` des raccourcis ou `BaobabRequest.headers`.
+- **Query** : `query_params` accepte une `str` par clé ou une `Sequence[str]` pour les clés répétées
+  (ex. `{"tag": ["a", "b"]}`), aligné sur `BaobabRequest`.
+
+Le transport synchrone (`HttpTransportCaller`) :
+
+- applique le **throttling** avant chaque tentative ;
+- applique le **retry** (`RetryPolicy`) sur erreurs réseau `requests`, statuts **429** et **5xx** ;
+- mappe les erreurs HTTP via le mapper interne vers les **exceptions** ci-dessous ;
+- ferme les `requests.Session` et `requests.Response` après usage ;
+- décode le JSON automatiquement seulement si le `Content-Type` indique du JSON (`application/json` ou
+  `application/*+json`).
+
+---
+
+## Erreurs
+
+Les erreurs métier / HTTP exposées publiquement dérivent de `BaobabWebApiCallerException` (voir
+[`__all__`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/src/baobab_web_api_caller/__init__.py)).
+
+Principales catégories :
+
+| Exception | Contexte |
+|-----------|------------|
+| `ConfigurationException` | Configuration ou paramètres invalides |
+| `AuthenticationException` | Réponse HTTP **401** |
+| `ResourceNotFoundException` | **404** |
+| `RateLimitException` | **429** |
+| `ClientHttpException` | Autres **4xx** (hors cas ci-dessus) |
+| `ServerHttpException` | **5xx** |
+| `TimeoutException` | Timeout réseau / requête |
+| `TransportException` | Erreur de transport générique |
+| `ResponseDecodingException` | Corps JSON attendu mais invalide ou absent |
+| `ServiceCallException` | Erreur côté couche service |
+
+Les exceptions HTTP (`HttpException` et sous-classes) exposent notamment `status_code`, un message
+lisible, un extrait de corps optionnel et un sous-ensemble d’en-têtes utiles au diagnostic.
+
+```python
+from baobab_web_api_caller import ClientHttpException, ResourceNotFoundException
+
+try:
+    service.get("/ressource/inconnue")
+except ResourceNotFoundException as exc:
+    code = exc.status_code  # 404
+    _ = str(exc)
+```
+
+---
+
+## Pagination
+
+Itération sur les pages via une **URL de page suivante** : implémentez `PageExtractor` (items dans la
+réponse) et `NextPageUrlExtractor` (lien suivant), puis `Paginator`.
+
+Exemple : [`docs/examples/pagination_minimal.py`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/examples/pagination_minimal.py)
+
+---
+
+## Téléchargement (streaming)
+
+`BulkFileDownloader` télécharge vers un fichier local en stream, réutilise la même logique de contexte
+que le transport et **ferme** la `requests.Session` et la `requests.Response` en fin d’appel (succès ou
+erreur). Les erreurs HTTP suivent le même mapping que `HttpTransportCaller`.
+
+Exemple : [`docs/examples/bulk_file_downloader_minimal.py`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/examples/bulk_file_downloader_minimal.py)
+
+---
+
+## Tests d’intégration externes (opt-in)
+
+Suite **optionnelle** contre **HTTPBin** et **Postman Echo** (réseau requis). **Sans activation**, les
+tests sont **ignorés** (`skip`), pas des échecs — adapté à une CI sans Internet.
 
 ```bash
+export BAOBAB_RUN_EXTERNAL_INTEGRATION=1   # bash
+# PowerShell : $env:BAOBAB_RUN_EXTERNAL_INTEGRATION = "1"
+
 pytest tests/baobab_web_api_caller/integration_external -m integration_external \
   -o addopts="--strict-markers --strict-config" --no-cov
 ```
 
-**Scénario delay / timeout (optionnel, plus fragile)** : définir en plus
-`BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1` pour exécuter le test qui attend un timeout sur un
-endpoint « delay » public. Sans ce flag, ce test est **ignoré**.
+Scénario **delay / timeout** supplémentaire (optionnel, plus sensible au réseau) :
+`BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1`.
 
-Si le réseau ou les services publics sont indisponibles, les tests sont **skippés** avec un message
-explicite (pas d'échec attribué à tort à la librairie). Voir `docs/release_validation_checklist.md`.
+Détails : [`docs/release_validation_checklist.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/release_validation_checklist.md).
 
-## Limites et évolutions possibles (post-1.0.0)
+---
 
-- **Retry avancé** : gestion de `Retry-After` (429) et erreurs 408/502/503/504 configurables.
-- **Async** : transport asynchrone (httpx/aiohttp) et streaming async.
-- **Pagination enrichie** : cas plus avancés (limites de pages, stratégies de navigation, etc.).
+## Limites connues
 
-Ces points **ne font pas partie du contrat 1.0.0** ; toute évolution majeure de comportement sera
-reflétée par semver et le `CHANGELOG.md`.
+- Pas de client **asynchrone** (async/await).
+- Retry : pas d’interprétation automatique de **`Retry-After`** pour calibrer les attentes.
+- Décodage JSON : selon les règles de `Content-Type` ci-dessus ; pas de désérialisation vers des
+  modèles Pydantic/dataclasses intégrée.
+- Évolutions envisagées (hors contrat détaillé ici) : retry avancé, async, pagination plus riche — voir
+  `CHANGELOG.md`.
 
+---
+
+## Validation locale et release
+
+Contrôle qualité courant (depuis la racine du dépôt) :
+
+```bash
+python -m black --check src tests
+python -m flake8
+python -m pylint src tests
+mypy .
+python -m bandit -r src
+python -m pytest
+```
+
+Avant publication : [`docs/release_validation_checklist.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/docs/release_validation_checklist.md),
+[`CHANGELOG.md`](https://github.com/baobabgit/baobab-web-api-caller/blob/main/CHANGELOG.md).
+
+---
+
+## Pour les contributeurs
+
+- Convention de tests : un fichier `test_<module>.py` par module source sous `src/baobab_web_api_caller/`
+  (exceptions documentées : `CallContext` / `build_call_context`, `mapping_utils`). Vérification :
+  `python docs/verify_test_mirror.py` (attendu : `gaps 0`).
+- Cahier des charges : `docs/01_specifications.md`.
+- Journal : `docs/dev_diary.md`.
+
+---
+
+## Licence
+
+MIT — voir le dépôt pour le texte complet.

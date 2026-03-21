@@ -11,6 +11,11 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Changed
 
+- **README** : réécriture orientée **documentation produit** (PyPI) : proposition de valeur,
+  installation, quickstart, authentification, erreurs, pagination, téléchargement, tests d’intégration,
+  limites ; liens GitHub pour les chemins `docs/` ; section contributeurs en fin de fichier.
+- **`pyproject.toml`** : métadonnées `[project.urls]` (accueil, dépôt, documentation, changelog).
+
 ### Fixed
 
 ---

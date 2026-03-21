@@ -1,20 +1,25 @@
-"""Exemple minimal d'utilisation du Paginator."""
+"""Exemple minimal d'utilisation du Paginator.
+
+Imports depuis le package racine (contrat stable 1.0.0) ; voir `docs/public_api_1_0_0.md`.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Sequence
 
-from baobab_web_api_caller.config.service_config import ServiceConfig
-from baobab_web_api_caller.core.baobab_request import BaobabRequest
-from baobab_web_api_caller.core.baobab_response import BaobabResponse
-from baobab_web_api_caller.core.http_method import HttpMethod
-from baobab_web_api_caller.pagination.next_page_url_extractor import NextPageUrlExtractor
-from baobab_web_api_caller.pagination.page_extractor import PageExtractor
-from baobab_web_api_caller.pagination.paginator import Paginator
-from baobab_web_api_caller.service.baobab_service_caller import BaobabServiceCaller
-from baobab_web_api_caller.transport.http_transport_caller import HttpTransportCaller
-from baobab_web_api_caller.transport.requests_session_factory import RequestsSessionFactory
+from baobab_web_api_caller import (
+    BaobabRequest,
+    BaobabResponse,
+    BaobabServiceCaller,
+    HttpMethod,
+    HttpTransportCaller,
+    NextPageUrlExtractor,
+    PageExtractor,
+    Paginator,
+    RequestsSessionFactory,
+    ServiceConfig,
+)
 
 
 @dataclass(frozen=True, slots=True)
