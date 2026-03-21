@@ -1,12 +1,18 @@
-"""Exemple minimal d'utilisation de BaobabServiceCaller."""
+"""Exemple minimal d'utilisation de BaobabServiceCaller.
+
+Préférez les imports depuis le package racine (contrat stable 1.0.0 ;
+voir `docs/public_api_1_0_0.md`).
+"""
 
 from __future__ import annotations
 
-from baobab_web_api_caller.auth.bearer_authentication_strategy import BearerAuthenticationStrategy
-from baobab_web_api_caller.config.service_config import ServiceConfig
-from baobab_web_api_caller.service.baobab_service_caller import BaobabServiceCaller
-from baobab_web_api_caller.transport.http_transport_caller import HttpTransportCaller
-from baobab_web_api_caller.transport.requests_session_factory import RequestsSessionFactory
+from baobab_web_api_caller import (
+    BaobabServiceCaller,
+    BearerAuthenticationStrategy,
+    HttpTransportCaller,
+    RequestsSessionFactory,
+    ServiceConfig,
+)
 
 
 def main() -> None:

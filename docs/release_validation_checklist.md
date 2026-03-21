@@ -3,6 +3,9 @@
 Utiliser cette liste **immédiatement avant** de publier une version (tag Git, GitHub Release, PyPI)
 ou de figer une entrée majeure dans `CHANGELOG.md`.
 
+Pour une **1.0.0** ou release majeure de stabilité d’API, compléter aussi `docs/checklist_go_1_0_0.md`
+(contrat public, checklist GO).
+
 ## Préalables
 
 - [ ] Arbre de travail propre ou changements explicitement listés dans les notes de release.

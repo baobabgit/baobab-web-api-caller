@@ -3,6 +3,42 @@
 Librairie Python orientée objet pour simplifier, standardiser et fiabiliser les appels HTTP(S)
 vers des API REST.
 
+**Version stable 1.0.0** — licence **MIT**. Voir `CHANGELOG.md` et la **surface publique garantie**
+dans `docs/public_api_1_0_0.md` (symboles exportés via `baobab_web_api_caller.__all__`).
+
+## API publique stable (1.0.0)
+
+À partir de la **1.0.0**, les symboles listés dans `__all__` au package racine constituent le **contrat
+de compatibilité** pour les versions **1.x.y** (ajouts rétrocompatibles autorisés ; ruptures
+nécessitant une version **majeure** 2.0.0). Cela inclut notamment :
+
+- modèles et façade : `BaobabRequest`, `BaobabResponse`, `HttpMethod`, `BaobabServiceCaller`, `BaobabWebApiCaller` ;
+- transport : `HttpTransportCaller`, `RequestsSessionFactory` ;
+- configuration : `ServiceConfig`, `RetryPolicy`, `RateLimitPolicy` ;
+- authentification : `AuthenticationStrategy` et les stratégies fournies (Bearer, Basic, clés API, absence d’auth) ;
+- exceptions : `BaobabWebApiCallerException` et la hiérarchie documentée (HTTP, transport, timeout, configuration, etc.) ;
+- pagination : `Paginator`, `PageResult`, `NextPageUrlExtractor`, `PageExtractor` ;
+- téléchargement : `BulkFileDownloader`.
+
+Les **sous-modules** (`baobab_web_api_caller.transport`, `core`, …) restent importables pour des usages
+avancés ; seuls les noms dans `__all__` sont **garantis** pour le suivi semver. Référence :
+`docs/public_api_1_0_0.md`. Checklist de publication : `docs/checklist_go_1_0_0.md`.
+
+## Ce que la librairie fait / ne fait pas
+
+**Fait** (périmètre 1.0.0) :
+
+- Appels HTTP(S) **synchrones** via `requests`, avec construction d’URL, query params (y compris multi-valeurs), corps JSON ou formulaire.
+- Fusion d’en-têtes (défauts service → requête → authentification), retry configurable, throttling, timeouts.
+- Mapping des erreurs HTTP et réseau vers des **exceptions typées** du projet.
+- Pagination par **URL de page suivante** et téléchargement **streaming** de fichiers.
+
+**Ne fait pas** (hors périmètre ou non garanti dans l’API stable) :
+
+- Client **asynchrone** (async/await) — évolution envisagée ultérieurement.
+- Gestion fine de `Retry-After` ou politiques de retry avancées au-delà de ce qui est exposé aujourd’hui.
+- Modules internes non exportés dans `__all__` (décoders, `build_call_context`, etc.) : peuvent évoluer sans bump majeur tant qu’ils ne sont pas promus au package racine.
+
 ## Principes
 
 - **Orienté objet et composition**: chaque brique (auth, config, transport, pagination, download) est injectable.
@@ -35,6 +71,18 @@ python -m pip install -e ".[dev]"
 ```
 
 ## Démarrage rapide
+
+Imports recommandés depuis le **package racine** (contrat stable) :
+
+```python
+from baobab_web_api_caller import (
+    BaobabServiceCaller,
+    BearerAuthenticationStrategy,
+    HttpTransportCaller,
+    RequestsSessionFactory,
+    ServiceConfig,
+)
+```
 
 ### Appel simple via façade de service
 
@@ -152,9 +200,12 @@ endpoint « delay » public. Sans ce flag, ce test est **ignoré**.
 Si le réseau ou les services publics sont indisponibles, les tests sont **skippés** avec un message
 explicite (pas d'échec attribué à tort à la librairie). Voir `docs/release_validation_checklist.md`.
 
-## Améliorations futures (hors V1)
+## Limites et évolutions possibles (post-1.0.0)
 
-- **Retry avancé**: gestion de `Retry-After` (429) et erreurs 408/502/503/504 configurables.
-- **Async**: transport asynchrone (httpx/aiohttp) et streaming async.
-- **Pagination enrichie**: cas plus avancés (limites de pages, stratégies de navigation, etc.).
+- **Retry avancé** : gestion de `Retry-After` (429) et erreurs 408/502/503/504 configurables.
+- **Async** : transport asynchrone (httpx/aiohttp) et streaming async.
+- **Pagination enrichie** : cas plus avancés (limites de pages, stratégies de navigation, etc.).
+
+Ces points **ne font pas partie du contrat 1.0.0** ; toute évolution majeure de comportement sera
+reflétée par semver et le `CHANGELOG.md`.
 

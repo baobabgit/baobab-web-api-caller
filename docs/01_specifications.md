@@ -683,7 +683,9 @@ Le projet doit fournir les éléments suivants :
 - `CHANGELOG.md` à la racine ;
 - `docs/dev_diary.md` ;
 - documentation interne par docstrings ;
-- exemples d'utilisation simples.
+- exemples d'utilisation simples ;
+- pour les versions **1.0.0+**, référence du **contrat public** : `docs/public_api_1_0_0.md` (symboles
+  stables exportés par le package racine via `__all__`).
 
 ### 13.1 Contenu attendu du README
 
