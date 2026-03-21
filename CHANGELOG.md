@@ -9,8 +9,14 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Added
 
+- **`docs/release_beta_rc_recommendation.md`** : recommandation **Beta / RC / 1.0.0 stable** et trace des
+  validations release.
+
 ### Changed
 
+- **`docs/release_validation_checklist.md`** : contrôles **black** (incl. `docs/examples`), **miroir**
+  tests, **build** optionnel ; lien vers **`docs/release_beta_rc_recommendation.md`** (Beta / RC /
+  stable).
 - **README** : réécriture orientée **documentation produit** (PyPI) : proposition de valeur,
   installation, quickstart, authentification, erreurs, pagination, téléchargement, tests d’intégration,
   limites ; liens GitHub pour les chemins `docs/` ; section contributeurs en fin de fichier.

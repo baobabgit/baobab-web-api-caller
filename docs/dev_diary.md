@@ -1,5 +1,21 @@
 # Journal de développement
 
+## 2026-03-21 22:00:00
+
+### Modifications
+- Passe **stabilisation Beta/RC** : rejouée checklist release (black, flake8, pylint, mypy, bandit,
+  pytest/couverture, `verify_test_mirror`, `python -m build`, intégration externe avec
+  `BAOBAB_RUN_EXTERNAL_INTEGRATION=1` et scénario timeout) — tout vert sur le commit courant.
+- **`docs/release_beta_rc_recommendation.md`** : recommandation **1.0.0 direct** (par défaut) ou
+  **`1.0.0rc1`** prudente ; **1.0.0b1** peu adapté tant que l’API est déjà figée en 1.0.0.
+- **`docs/release_validation_checklist.md`** : lignes black / miroir / build ; section décision Beta/RC.
+
+### Buts
+- Documenter la décision de publication sans incohérence entre version dépôt, classifiers et contrat public.
+
+### Impact
+- Les mainteneurs disposent d’une trace reproductible pour tag PyPI et choix semver pré-release.
+
 ## 2026-03-21 20:00:00
 
 ### Modifications
