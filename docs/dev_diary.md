@@ -1,5 +1,20 @@
 # Journal de développement
 
+## 2026-03-21 24:00:00
+
+### Modifications
+- **`docs/checklist_go_1_0_0.md`** : cases cochées pour l’état réel du dépôt (qualité, intégration externe,
+  packaging **LICENSE** / build / `release_notes_1_0_0.md`) ; sections **8. Références** et historique ;
+  actions manuelles résiduelles (tag `v1.0.0`, upload PyPI) laissées ouvertes.
+- Suppression des fichiers **`docs/PR_BODY_*.md`** (corps de PR ponctuels, redondants une fois les merges
+  effectués).
+
+### Buts
+- Éviter la dérive entre checklist et réalité ; alléger `docs/` des artefacts de PR inutiles.
+
+### Impact
+- Une seule source de vérité pour le GO 1.0.0 ; moins de fichiers à maintenir.
+
 ## 2026-03-21 23:30:00
 
 ### Modifications
@@ -58,7 +73,7 @@
   d’auth, `RetryPolicy`, `RateLimitPolicy`, pagination `PageResult` / `NextPageUrlExtractor` /
   `PageExtractor`, `BaobabWebApiCaller`) ; `__version__` et `pyproject.toml` alignés sur **1.0.0** ;
   classifier **Production/Stable**.
-- Documentation : `docs/public_api_1_0_0.md`, `docs/checklist_go_1_0_0.md`, `docs/PR_BODY_API_1_0_0.md` ;
+- Documentation : `docs/public_api_1_0_0.md`, `docs/checklist_go_1_0_0.md` ;
   README (API stable, limites, imports racine) ; `CHANGELOG.md` section `[1.0.0]` ; `docs/01_specifications.md` §13 ;
   exemple `docs/examples/service_caller_minimal.py` avec imports racine.
 - Tests : `test_public_api_exports.py` ; `test_package_metadata.py` (version **1.0.0**).

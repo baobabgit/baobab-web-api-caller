@@ -16,6 +16,8 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Changed
 
+- **`docs/checklist_go_1_0_0.md`** : alignement sur l’état du dépôt (qualité, intégration, packaging) ;
+  références consolidées ; suppression des **`docs/PR_BODY_*.md`** (fichiers de PR ponctuels).
 - **`pyproject.toml`** : description courte PyPI affinée ; `license` via fichier **LICENSE** ; mots-clés
   et classifiers (**OS Independent**, sujets HTTP / bibliothèques) pour une fiche PyPI complète.
 - **`docs/release_validation_checklist.md`** : contrôles **black** (incl. `docs/examples`), **miroir**
