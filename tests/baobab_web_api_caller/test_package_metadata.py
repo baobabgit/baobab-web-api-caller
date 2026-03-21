@@ -13,3 +13,8 @@ class TestPackageMetadata:
 
         assert isinstance(baobab_web_api_caller.__version__, str)
         assert baobab_web_api_caller.__version__.strip() != ""
+
+    def test_version_matches_semver_1_0_0(self) -> None:
+        """La version publique suit la release stable documentée."""
+
+        assert baobab_web_api_caller.__version__ == "1.0.0"

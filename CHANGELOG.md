@@ -7,10 +7,22 @@ et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
-Avant de publier une version : exécuter `docs/release_validation_checklist.md` et ne pas ajouter
-ici ce qui n’est pas observable dans le dépôt (code, tests, documentation à jour).
+### Added
+
+### Changed
+
+### Fixed
+
+---
+
+## [1.0.0] - 2026-03-21
+
+Première version **stable** : contrat public explicite (`baobab_web_api_caller.__all__`), classifier
+PyPI *Production/Stable*, documentation d’API (`docs/public_api_1_0_0.md`) et checklist GO
+(`docs/checklist_go_1_0_0.md`).
 
 ### Added
+
 - Suite de **tests d’intégration externes** (release gate) sous `tests/baobab_web_api_caller/integration_external/` : HTTPBin + Postman Echo, activation explicite via `BAOBAB_RUN_EXTERNAL_INTEGRATION=1`, marqueur pytest `integration_external`, skip propre si désactivé ou service injoignable ; scénario delay/timeout optionnel via `BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1`.
 - `docs/release_validation_checklist.md` : checklist de validation release (qualité + cohérence).
 - `docs/verify_test_mirror.py` : script de contrôle rapide fichier de test miroir / module source.
@@ -20,14 +32,19 @@ ici ce qui n’est pas observable dans le dépôt (code, tests, documentation à
 - Support des paramètres de query string sous forme de chaînes ou de séquences de chaînes (`Mapping[str, str | Sequence[str]]`) dans `BaobabRequest`, avec encodage correct des clés répétées dans `RequestUrlBuilder` et support côté pagination.
 - Tests supplémentaires + documentation clarifiée pour la gestion des query params multi-valués (séquences, clés répétées) et la compatibilité avec `ApiKeyQueryAuthenticationStrategy`.
 - Détection JSON élargie dans `JsonResponseDecoder` pour les content-types JSON usuels (`application/json` et `application/*+json`).
+- **Exports publics stables** : le package racine réexporte les exceptions, stratégies d’authentification, `RetryPolicy`, `RateLimitPolicy`, contrats de pagination (`PageResult`, `NextPageUrlExtractor`, `PageExtractor`) et `BaobabWebApiCaller` ; liste figée dans `__all__` (voir `docs/public_api_1_0_0.md`).
 
 ### Changed
+
+- **Version et maturité** : `1.0.0`, classifier PyPI `Development Status :: 5 - Production/Stable`.
 - Granularité miroir des tests : ajout de `tests/.../utils/test_mapping_utils.py`, de `tests/.../transport/test_call_context.py` pour `CallContext`, et renommage de la classe de tests `TestCallContextBuilder` en `TestBuildCallContext` dans `test_call_context_builder.py` ; arborescence `utils/` documentée dans les spécifications.
 - Documentation (README, spécifications) : rappel explicite de la convention de nommage `test_<module>.py` et des exceptions (`CallContext` / `build_call_context`, `mapping_utils`) pour que l’arborescence visible corresponde aux engagements du projet.
 - Audit de cohérence documentation / code : précisions sur `JsonResponseDecoder` (règles réelles de `Content-Type`), `ErrorResponseMapper` (messages et en-têtes diagnostiques), `BulkFileDownloader` (fermeture des ressources, `build_call_context`), et typo corrigée dans la liste du `CHANGELOG`.
 - Mise en conformité des outils : `mypy` sur `src` et `tests` ; `black` ; `pylint src tests` sans erreur (`pyproject.toml` : `min-similarity-lines` pylint relevé pour limiter les R0801 entre tests ; suppressions locales documentées : complexité `BulkFileDownloader.download`, flux `HttpTransportCaller.call`, accès interne dans `test_throttler`) ; import inutilisé retiré de `RequestUrlBuilder`.
+- README : périmètre fonctionnel, limites, lien vers l’API publique stable et checklist GO 1.0.0.
 
 ### Fixed
+
 - Fermeture explicite des `requests.Session` après chaque appel dans le transport synchrone.
 - Fermeture explicite des `requests.Response` (y compris en streaming) dans le downloader, pour éviter les fuites de ressources.
 - Fermeture “safe” des ressources `requests.Session` / `requests.Response` via vérifications d’initialisation, et tests garantissant la fermeture effective en cas d’erreur d’écriture disque.
@@ -40,6 +57,7 @@ ici ce qui n’est pas observable dans le dépôt (code, tests, documentation à
 ## [0.1.0] - 2026-03-17
 
 ### Added
+
 - Bootstrap du projet (packaging moderne, arborescence, outillage qualité, base de tests).
 - Hiérarchie d'exceptions du projet.
 - Noyau HTTP (HttpMethod, BaobabRequest, BaobabResponse).
@@ -51,4 +69,3 @@ ici ce qui n’est pas observable dans le dépôt (code, tests, documentation à
 - Retry et throttling intégrés au transport.
 - Pagination générique basée sur une next page URL.
 - Téléchargement streaming de fichiers via `BulkFileDownloader`.
-

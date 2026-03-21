@@ -1,5 +1,24 @@
 # Journal de développement
 
+## 2026-03-21 18:00:00
+
+### Modifications
+- Gel du **contrat public 1.0.0** : extension de `baobab_web_api_caller.__all__` (exceptions, stratégies
+  d’auth, `RetryPolicy`, `RateLimitPolicy`, pagination `PageResult` / `NextPageUrlExtractor` /
+  `PageExtractor`, `BaobabWebApiCaller`) ; `__version__` et `pyproject.toml` alignés sur **1.0.0** ;
+  classifier **Production/Stable**.
+- Documentation : `docs/public_api_1_0_0.md`, `docs/checklist_go_1_0_0.md`, `docs/PR_BODY_API_1_0_0.md` ;
+  README (API stable, limites, imports racine) ; `CHANGELOG.md` section `[1.0.0]` ; `docs/01_specifications.md` §13 ;
+  exemple `docs/examples/service_caller_minimal.py` avec imports racine.
+- Tests : `test_public_api_exports.py` ; `test_package_metadata.py` (version **1.0.0**).
+
+### Buts
+- Rendre l’API publique **volontaire** et documentée pour Semantic Versioning à partir de la 1.0.0.
+
+### Impact
+- Les consommateurs peuvent s’appuyer sur `__all__` et `docs/public_api_1_0_0.md` ; les modules internes
+  hors `__all__` restent évolutifs sans bump majeur tant qu’ils ne sont pas promus.
+
 ## 2026-03-21 12:00:00
 
 ### Modifications
