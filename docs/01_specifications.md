@@ -620,6 +620,7 @@ tests/baobab_web_api_caller/
 ├── core/
 ├── download/
 ├── exceptions/
+├── integration_external/
 ├── pagination/
 ├── service/
 ├── transport/
@@ -657,6 +658,21 @@ Le projet doit inclure au minimum des tests pour :
 - le téléchargement de fichier ;
 - la façade `BaobabServiceCaller` ;
 - les classes abstraites via implémentations concrètes de test.
+
+## 12.4 Tests d'intégration externes (validation release)
+
+En complément des tests unitaires, le projet peut inclure une **suite de validation release** contre
+des services HTTP publics de test (**HTTPBin** et **Postman Echo** uniquement).
+
+- **Emplacement** : `tests/baobab_web_api_caller/integration_external/` (hors convention « un module
+  source ↔ un fichier miroir » : il n’existe pas de module `integration_external` sous `src/`).
+- **Activation explicite** : variable d’environnement `BAOBAB_RUN_EXTERNAL_INTEGRATION=1` ; sans cette
+  valeur, les tests sont **ignorés** (`skip`) pour ne pas dépendre du réseau dans la suite par défaut.
+- **Marqueur pytest** : `integration_external` (enregistré dans `pyproject.toml`).
+- **Indisponibilité** : si les services publics sont injoignables, les tests concernés sont ignorés
+  avec un message explicite (pas d’échec « silencieux » interprété comme une régression de la librairie).
+- **Scénario optionnel delay/timeout** : `BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1` pour activer un cas
+  volontairement sensible au réseau ; sans ce flag, le test est ignoré.
 
 ---
 

@@ -112,6 +112,9 @@ addopts = [
   "--cov-report=xml",
   "--cov-fail-under=90",
 ]
+markers = [
+  "integration_external: tests réseau optionnels contre HTTPBin / Postman Echo (opt-in via env)",
+]
 
 [tool.coverage.run]
 branch = true

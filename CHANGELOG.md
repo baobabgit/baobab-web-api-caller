@@ -11,6 +11,7 @@ Avant de publier une version : exécuter `docs/release_validation_checklist.md` 
 ici ce qui n’est pas observable dans le dépôt (code, tests, documentation à jour).
 
 ### Added
+- Suite de **tests d’intégration externes** (release gate) sous `tests/baobab_web_api_caller/integration_external/` : HTTPBin + Postman Echo, activation explicite via `BAOBAB_RUN_EXTERNAL_INTEGRATION=1`, marqueur pytest `integration_external`, skip propre si désactivé ou service injoignable ; scénario delay/timeout optionnel via `BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1`.
 - `docs/release_validation_checklist.md` : checklist de validation release (qualité + cohérence).
 - `docs/verify_test_mirror.py` : script de contrôle rapide fichier de test miroir / module source.
 - Alignement typé des raccourcis `BaobabServiceCaller` (`get`, `post`, `put`, `patch`, `delete`, `head`, `options`) sur `BaobabRequest` pour `query_params` : `Mapping[str, str | Sequence[str]] | None`.

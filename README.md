@@ -125,6 +125,33 @@ pytest
 Avant une **release** (tag, PyPI), suivre en plus `docs/release_validation_checklist.md` et vérifier
 le miroir des tests avec `python docs/verify_test_mirror.py` (attendu : `gaps 0`).
 
+### Tests d'intégration externes (release gate, HTTPBin + Postman Echo)
+
+Une suite **optionnelle** valide le comportement réel contre des services publics de test (**HTTPBin**,
+**Postman Echo**). Elle complète les tests unitaires : **elle ne s'exécute pas par défaut** et ne doit
+pas être requise dans une CI stricte sans réseau contrôlé.
+
+**Activation (obligatoire pour lancer ces tests)** :
+
+- Définir `BAOBAB_RUN_EXTERNAL_INTEGRATION=1` (valeur exacte `1`).
+- Sous **PowerShell** : `$env:BAOBAB_RUN_EXTERNAL_INTEGRATION = "1"`
+- Sous **bash** : `export BAOBAB_RUN_EXTERNAL_INTEGRATION=1`
+
+**Lancer uniquement cette suite** (sans couverture, pour éviter un seuil `fail_under` trompeur si vous
+ne lancez que ces tests) :
+
+```bash
+pytest tests/baobab_web_api_caller/integration_external -m integration_external \
+  -o addopts="--strict-markers --strict-config" --no-cov
+```
+
+**Scénario delay / timeout (optionnel, plus fragile)** : définir en plus
+`BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1` pour exécuter le test qui attend un timeout sur un
+endpoint « delay » public. Sans ce flag, ce test est **ignoré**.
+
+Si le réseau ou les services publics sont indisponibles, les tests sont **skippés** avec un message
+explicite (pas d'échec attribué à tort à la librairie). Voir `docs/release_validation_checklist.md`.
+
 ## Améliorations futures (hors V1)
 
 - **Retry avancé**: gestion de `Retry-After` (429) et erreurs 408/502/503/504 configurables.

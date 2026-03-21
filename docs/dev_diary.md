@@ -1,5 +1,24 @@
 # Journal de développement
 
+## 2026-03-21 12:00:00
+
+### Modifications
+- Ajout de `tests/baobab_web_api_caller/integration_external/` : scénarios release gate contre **HTTPBin**
+  et **Postman Echo** (query simple/multi, headers, POST JSON, Basic Auth, erreurs HTTP → exceptions
+  projet, transport nu `HttpTransportCaller`, echo Postman, statut explicite, en-têtes de réponse,
+  timeout/delay optionnel).
+- `conftest` : opt-in `BAOBAB_RUN_EXTERNAL_INTEGRATION=1`, sonde réseau courte, skip documenté ;
+  fixture optionnelle `BAOBAB_EXTERNAL_INTEGRATION_TIMEOUT_TEST=1` pour le cas delay.
+- `helpers` : URLs publiques, `ServiceConfig`/`BaobabServiceCaller` en mode « une tentative ».
+- `pyproject.toml` : marqueur pytest `integration_external` ; documentation `README.md`,
+  `docs/release_validation_checklist.md`, `docs/01_specifications.md` §12.4, `CHANGELOG.md`.
+
+### Buts
+- Offrir un dernier contrôle réaliste avant release sans rendre la CI dépendante du réseau ni des tiers.
+
+### Impact
+- Les tests unitaires restent la base ; l’intégration externe est explicite, rapide et ignorée par défaut.
+
 ## 2026-03-17 12:00:00
 
 ### Modifications
